@@ -1,13 +1,14 @@
-﻿using System.ComponentModel;
+﻿using ELRSControl.Models;
+using ELRSControl.Services;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
+using System.Linq;
+using System.Net;
 using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Input;
 using System.Windows.Controls.Primitives;
-using ELRSControl.Services;
-using ELRSControl.Models;
-using System.Linq;
+using System.Windows.Input;
 using System.Windows.Threading;
 
 namespace ELRSControl
@@ -53,11 +54,12 @@ namespace ELRSControl
         {
             RefreshPorts();
 
-            _addresses.Add("FF");
-            _addresses.Add("C8");
+                _addresses.Add("FF");
+                _addresses.Add("C8");
             var customAddresses = _configManager.LoadCustomAddresses();
             foreach (var addr in customAddresses)
             {
+                if (addr != "C8" && addr != "FF")
                 _addresses.Add(addr);
             }
 
@@ -123,9 +125,7 @@ namespace ELRSControl
                         Height = 24,
                         Padding = new Thickness(0),
                         Margin = new Thickness(8, 0, 0, 0),
-                        Background = new System.Windows.Media.SolidColorBrush(System.Windows.Media.Color.FromArgb(32, 255, 255, 255)),
-                        Foreground = System.Windows.Media.Brushes.White,
-                        FontSize = 14,
+                        Style = (Style)this.FindResource("DeleteButtonStyle"),
                         Cursor = System.Windows.Input.Cursors.Hand
                     };
                     deleteBtn.Click += (s, e) => DeleteAddress_Click(address);
@@ -165,13 +165,62 @@ namespace ELRSControl
             }
 
             AddressMenuButton.Items.Add(new Separator());
+            MenuItem addingitem = null;
+            var AddDockPanel = new DockPanel();
+            var addressBlock = new TextBox
+            {
+                Text = "AA",
+                Foreground = System.Windows.Media.Brushes.White,
+                VerticalAlignment = System.Windows.VerticalAlignment.Center,
+                Margin = new Thickness(10, 0, 0, 0)
+            };
+            DockPanel.SetDock(addressBlock, Dock.Left);
+            AddDockPanel.Children.Add(addressBlock);
+            var addBtn = new Button
+            {
+                Content = "+",
+                Width = 24,
+                Height = 24,
+                Padding = new Thickness(0),
+                Margin = new Thickness(8, 0, 0, 0),
+                Style = (Style)this.FindResource("AddButtonStyle"),
+                Cursor = System.Windows.Input.Cursors.Hand
+            };
+            DockPanel.SetDock(addBtn, Dock.Right);
+            AddDockPanel.Children.Add(addBtn);
+            addingitem = new MenuItem
+            {
+                Header = AddDockPanel,
+                Style = (Style)Resources["SelectableMenuItemStyle"],
+                Visibility = Visibility.Collapsed
+            };
+            addingitem.Click += AddressMenuItem_Click;
+            AddressMenuButton.Items.Add(addingitem);
             var addItem = new MenuItem
             {
                 Header = "Добавить",
                 Style = (Style)Resources["SelectableMenuItemStyle"]
             };
-            addItem.Click += AddAddressBtn_Click;
+            addItem.Click += (s, ea) =>
+            {
+                addItem.Visibility = Visibility.Collapsed;
+                addingitem.Visibility = Visibility.Visible;
+            };
             AddressMenuButton.Items.Add(addItem);
+            addBtn.Click += (s, ea) =>
+            {
+                var address = addressBlock.Text.ToUpper();
+                if (!string.IsNullOrWhiteSpace(address))
+                {
+                    _configManager.AddAddress(_addresses, address);
+                    UpdateAddressMenu();
+                    _selectedAddress = address;
+                    AddressMenuButton.Header = address;
+                    addItem.Visibility = Visibility.Visible;
+                    addingitem.Visibility = Visibility.Collapsed;
+                }
+            };
+
         }
 
         private void DeleteAddress_Click(string address)
@@ -210,50 +259,6 @@ namespace ELRSControl
             }
         }
 
-        private void AddAddressBtn_Click(object sender, RoutedEventArgs e)
-        {
-            var dialog = new Window
-            {
-                Title = "Добавить адрес CRSF",
-                Width = 300,
-                Height = 150,
-                WindowStyle = WindowStyle.SingleBorderWindow,
-                Background = System.Windows.Media.Brushes.LightGray
-            };
-
-            var stackPanel = new StackPanel { Margin = new Thickness(10) };
-            var textBlock = new TextBlock { Text = "Введите адрес (HEX):", Margin = new Thickness(0, 0, 0, 10) };
-            var textBox = new TextBox { Height = 30, Margin = new Thickness(0, 0, 0, 10) };
-
-            var buttonPanel = new StackPanel { Orientation = Orientation.Horizontal, HorizontalAlignment = HorizontalAlignment.Right };
-            var okBtn = new Button { Content = "OK", Width = 80, Margin = new Thickness(5) };
-            var cancelBtn = new Button { Content = "Отмена", Width = 80, Margin = new Thickness(5) };
-
-            okBtn.Click += (s, ea) =>
-            {
-                var address = textBox.Text.ToUpper();
-                if (!string.IsNullOrWhiteSpace(address))
-                {
-                    _configManager.AddAddress(_addresses, address);
-                    UpdateAddressMenu();
-                    _selectedAddress = address;
-                    AddressMenuButton.Header = address;
-                }
-                dialog.Close();
-            };
-
-            cancelBtn.Click += (s, ea) => dialog.Close();
-
-            buttonPanel.Children.Add(okBtn);
-            buttonPanel.Children.Add(cancelBtn);
-
-            stackPanel.Children.Add(textBlock);
-            stackPanel.Children.Add(textBox);
-            stackPanel.Children.Add(buttonPanel);
-
-            dialog.Content = stackPanel;
-            dialog.ShowDialog();
-        }
 
         private void ConnectBtn_Click(object sender, RoutedEventArgs e)
         {

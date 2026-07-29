@@ -6,14 +6,34 @@
              mc:Ignorable="d"
              d:DesignHeight="200" d:DesignWidth="200"
              Width="200" Height="200">
-    <Grid x:Name="MainGrid" Background="#20000000" ClipToBounds="True">
-        <Canvas x:Name="JoystickCanvas" Background="#15FFFFFF" MouseDown="JoystickCanvas_MouseDown" MouseMove="JoystickCanvas_MouseMove" MouseUp="JoystickCanvas_MouseUp" MouseLeave="JoystickCanvas_MouseLeave">
-            <Line X1="0" Y1="100" X2="200" Y2="100" Stroke="#25FFFFFF" StrokeThickness="1"/>
-            <Line X1="100" Y1="0" X2="100" Y2="200" Stroke="#25FFFFFF" StrokeThickness="1"/>
-            <Ellipse Canvas.Left="25" Canvas.Top="25" Width="150" Height="150" 
-                     Fill="Transparent" Stroke="#15FFFFFF" StrokeThickness="2"/>
-            <Ellipse x:Name="JoystickKnob" Canvas.Left="85" Canvas.Top="85" Width="30" Height="30" 
-                     Fill="#2D7ACC" Stroke="#0066CC" StrokeThickness="2" Cursor="Hand"/>
+    <Grid x:Name="MainGrid" ClipToBounds="True">
+        <Canvas x:Name="JoystickCanvas" MouseDown="JoystickCanvas_MouseDown" MouseMove="JoystickCanvas_MouseMove" MouseUp="JoystickCanvas_MouseUp" MouseLeave="JoystickCanvas_MouseLeave">
+            <Line X1="25" Y1="100" X2="175" Y2="100" Stroke="#25FFFFFF" StrokeThickness="1"/>
+            <Line X1="100" Y1="25" X2="100" Y2="175" Stroke="#25FFFFFF" StrokeThickness="1"/>
+
+			<Ellipse Canvas.Left="25" Canvas.Top="25" Width="150" Height="150" Stroke="#15FFFFFF" StrokeThickness="2">
+				<Ellipse.Fill>
+					<RadialGradientBrush>
+						<GradientStop Color="#20000000"/>
+						<GradientStop Color="#35FFFFFF" Offset="1"/>
+					</RadialGradientBrush>
+				</Ellipse.Fill>
+			</Ellipse>
+
+			<Ellipse x:Name="JoystickKnob" Canvas.Left="85" Canvas.Top="85" Width="30" Height="30" StrokeThickness="2" Cursor="Hand">
+				<Ellipse.Fill>
+					<RadialGradientBrush>
+						<GradientStop Color="#20000000"/>
+						<GradientStop Color="#35FFFFFF" Offset="1"/>
+					</RadialGradientBrush>
+				</Ellipse.Fill>
+				<Ellipse.Stroke>
+					<LinearGradientBrush EndPoint="0,0" StartPoint="0.5,1" ColorInterpolationMode="ScRgbLinearInterpolation" SpreadMethod="Reflect">
+						<GradientStop Color="#FF224754" Offset="0"/>
+						<GradientStop Color="#FF532967" Offset="1"/>
+					</LinearGradientBrush>
+				</Ellipse.Stroke>
+			</Ellipse>
         </Canvas>
     </Grid>
 </UserControl>
