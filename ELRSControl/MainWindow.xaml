@@ -81,6 +81,7 @@
             <Setter Property="BorderThickness" Value="1"/>
             <Setter Property="Padding" Value="6,4"/>
             <Setter Property="Margin" Value="6,4"/>
+            <Setter Property="Width" Value="50"/>
             <Setter Property="CaretBrush" Value="White"/>
             <Setter Property="Template">
                 <Setter.Value>
@@ -96,14 +97,6 @@
             </Setter>
         </Style>
 
-        <Style TargetType="ComboBox">
-            <Setter Property="Background" Value="#20000000"/>
-            <Setter Property="Foreground" Value="White"/>
-            <Setter Property="BorderBrush" Value="#35FFFFFF"/>
-            <Setter Property="BorderThickness" Value="1"/>
-            <Setter Property="Padding" Value="6,4"/>
-            <Setter Property="Margin" Value="6,4"/>
-        </Style>
         <Style x:Key="HeaderSeparatorStyle" TargetType="Separator">
             <Setter Property="Margin" Value="10,0"/>
             <Setter Property="VerticalAlignment" Value="Center"/>
@@ -112,8 +105,62 @@
                 <Setter.Value>
                     <ControlTemplate TargetType="Separator">
                         <Border Background="#25FFFFFF" 
-                Width="{TemplateBinding Width}" 
-                Height="{TemplateBinding Height}"/>
+                        Width="{TemplateBinding Width}" 
+                        Height="{TemplateBinding Height}"/>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="SelectableMenuItemStyle" TargetType="MenuItem">
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="Padding" Value="10,6"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="MenuItem">
+                        <Grid SnapsToDevicePixels="True">
+                            <Border x:Name="Bg" Background="Transparent" CornerRadius="4"/>
+                            <ContentPresenter ContentSource="Header" Margin="{TemplateBinding Padding}" RecognizesAccessKey="True"/>
+                        </Grid>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Bg" Property="Background" Value="#20FFFFFF"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="MenuItemStyle" TargetType="MenuItem">
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="Padding" Value="10,6"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="MenuItem">
+                        <Grid SnapsToDevicePixels="True">
+                            <Border x:Name="Bg" Background="Transparent" CornerRadius="4"/>
+                            <ContentPresenter ContentSource="Header" Margin="{TemplateBinding Padding}" RecognizesAccessKey="True"/>
+                            <Popup x:Name="SubMenuPopup" AllowsTransparency="True" IsOpen="{Binding IsSubmenuOpen, RelativeSource={RelativeSource TemplatedParent}}" Placement="Bottom" Focusable="False" PopupAnimation="Fade">
+                                <Border BorderBrush="#35FFFFFF" BorderThickness="1" CornerRadius="6" Padding="2" Margin="0,4,0,0">
+                                    <Border.Background>
+                                        <LinearGradientBrush EndPoint="0,0" StartPoint="0.5,1" ColorInterpolationMode="ScRgbLinearInterpolation" SpreadMethod="Reflect">
+                                            <GradientStop Color="#FF2D1A1D" Offset="0.105"/>
+                                            <GradientStop Color="#FF251A30" Offset="0.918"/>
+                                        </LinearGradientBrush>
+                                    </Border.Background>
+                                    <StackPanel IsItemsHost="True" KeyboardNavigation.DirectionalNavigation="Cycle"/>
+                                </Border>
+                            </Popup>
+                        </Grid>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Bg" Property="Background" Value="#20FFFFFF"/>
+                            </Trigger>
+                            <Trigger Property="IsSubmenuOpen" Value="True">
+                                <Setter TargetName="Bg" Property="Background" Value="#20FFFFFF"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
                     </ControlTemplate>
                 </Setter.Value>
             </Setter>
@@ -140,128 +187,101 @@
         <Grid>
             <Grid.RowDefinitions>
                 <RowDefinition Height="40"/>
-                <RowDefinition Height="80"/>
-                <RowDefinition Height="*"/>
+                <RowDefinition Height="2*"/>
+                <RowDefinition Height="8*"/>
             </Grid.RowDefinitions>
 
             <StackPanel Grid.Row="0" Orientation="Horizontal" VerticalAlignment="Center" Margin="15,0,0,0">
-                <TextBlock Text="Пульт • CRSF" Foreground="Wheat" Opacity="0.9" FontSize="14" FontWeight="SemiBold"/>
+                <TextBlock Text="Пульт • CRSF" Foreground="Wheat" Opacity="0.9" FontSize="12" FontWeight="SemiBold"/>
             </StackPanel>
+
             <StackPanel Grid.Row="0" Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Top">
                 <Button Style="{StaticResource CaptionButtonStyle}" Click="MinimizeBtn_Click" Content="&#xE921;"/>
                 <Button Style="{StaticResource CaptionButtonStyle}" Click="MaximizeBtn_Click" Content="{Binding MaximizeIcon}"/>
                 <Button Style="{StaticResource CloseButtonStyle}" Click="CloseBtn_Click" Content="&#xE10A;"/>
             </StackPanel>
 
-            <StackPanel Grid.Row="1" Background="#0AFFFFFF" Orientation="Horizontal"  Margin="12,0,12,12">
+            <StackPanel Grid.Row="1" Background="#0AFFFFFF" Orientation="Horizontal" Margin="12,0,12,12">
                 <StackPanel Orientation="Vertical" Margin="5">
-                    <TextBlock Text="Адрес" Foreground="#A0FFFFFF" HorizontalAlignment="Center" VerticalAlignment="Top"/>
+                    <TextBlock Text="Адрес" Foreground="#A0FFFFFF" HorizontalAlignment="Center" VerticalAlignment="Top" FontSize="11"/>
                     <Menu Background="Transparent" WindowChrome.IsHitTestVisibleInChrome="True" HorizontalAlignment="Center" VerticalAlignment="Center">
-                        <Menu.Resources>
-                            <Style TargetType="MenuItem">
-                                <Setter Property="Foreground" Value="White"/>
-                                <Setter Property="Padding" Value="10,6"/>
-                                <Setter Property="Template">
-                                    <Setter.Value>
-                                        <ControlTemplate TargetType="MenuItem">
-                                            <Grid SnapsToDevicePixels="True">
-                                                <Border x:Name="Bg" Background="Transparent" CornerRadius="4"/>
-                                                <ContentPresenter ContentSource="Header" Margin="{TemplateBinding Padding}" RecognizesAccessKey="True"/>
-                                                <Popup x:Name="SubMenuPopup" AllowsTransparency="True" IsOpen="{Binding IsSubmenuOpen, RelativeSource={RelativeSource TemplatedParent}}" Placement="Bottom" Focusable="False" PopupAnimation="Fade">
-                                                    <Border BorderBrush="#35FFFFFF" BorderThickness="1" CornerRadius="6" Padding="2" Margin="0,4,0,0">
-                                                        <Border.Background>
-                                                            <LinearGradientBrush EndPoint="0,0" StartPoint="0.5,1" ColorInterpolationMode="ScRgbLinearInterpolation" SpreadMethod="Reflect">
-                                                                <GradientStop Color="#FF2D1A1D" Offset="0.105"/>
-                                                                <GradientStop Color="#FF251A30" Offset="0.918"/>
-                                                            </LinearGradientBrush>
-                                                        </Border.Background>
-                                                        <StackPanel IsItemsHost="True" KeyboardNavigation.DirectionalNavigation="Cycle"/>
-                                                    </Border>
-                                                </Popup>
-                                            </Grid>
-                                            <ControlTemplate.Triggers>
-                                                <Trigger Property="IsMouseOver" Value="True">
-                                                    <Setter TargetName="Bg" Property="Background" Value="#20FFFFFF"/>
-                                                </Trigger>
-                                                <Trigger Property="IsSubmenuOpen" Value="True">
-                                                    <Setter TargetName="Bg" Property="Background" Value="#20FFFFFF"/>
-                                                </Trigger>
-                                            </ControlTemplate.Triggers>
-                                        </ControlTemplate>
-                                    </Setter.Value>
-                                </Setter>
-                            </Style>
-                        </Menu.Resources>
-
-                        <MenuItem Header="FF">
-                            <MenuItem Header="FF"/>
-                            <MenuItem Header="C8"/>
-                            <StackPanel Orientation="Horizontal">
-                                <TextBlock Text="3A" VerticalAlignment="Center"/>
-                                <Button Content="x" Style="{StaticResource HeaderButtonStyle}"/>
-                            </StackPanel>
-                            <StackPanel Orientation="Horizontal">
-                                <TextBlock Text="C8" VerticalAlignment="Center"/>
-                                <Button Content="x" Style="{StaticResource HeaderButtonStyle}"/>
-                            </StackPanel>
-                            <MenuItem Header="Добавить" Click="AddAddressBtn_Click"/>
+                        <MenuItem x:Name="AddressMenuButton" Header="FF" Style="{StaticResource MenuItemStyle}">
+                            <MenuItem Header="FF" Tag="FF" Click="AddressMenuItem_Click" Style="{StaticResource SelectableMenuItemStyle}"/>
+                            <MenuItem Header="C8" Tag="C8" Click="AddressMenuItem_Click" Style="{StaticResource SelectableMenuItemStyle}"/>
+                            <Separator/>
+                            <MenuItem Header="Добавить" Click="AddAddressBtn_Click" Style="{StaticResource SelectableMenuItemStyle}"/>
                         </MenuItem>
                     </Menu>
                 </StackPanel>
+
                 <Separator Style="{StaticResource HeaderSeparatorStyle}" VerticalAlignment="Stretch" Margin="0,10"/>
+
                 <StackPanel Orientation="Vertical" Margin="5">
-                    <TextBlock Text="Тяга" Foreground="#A0FFFFFF" HorizontalAlignment="Center" VerticalAlignment="Top"/>
+                    <TextBlock Text="Тяга" Foreground="#A0FFFFFF" HorizontalAlignment="Center" VerticalAlignment="Top" FontSize="11"/>
                     <TextBox x:Name="ThrottleTextBox" Text="1500" TextChanged="ThrottleTextBox_TextChanged"/>
                 </StackPanel>
+
                 <Separator Style="{StaticResource HeaderSeparatorStyle}" VerticalAlignment="Stretch" Margin="0,10"/>
                 <StackPanel Orientation="Vertical" Margin="5">
-                    <TextBlock Text="Крен" Foreground="#A0FFFFFF" HorizontalAlignment="Center" VerticalAlignment="Top"/>
+                    <TextBlock Text="Крен" Foreground="#A0FFFFFF" HorizontalAlignment="Center" VerticalAlignment="Top" FontSize="11"/>
                     <TextBox x:Name="RollTextBox" Text="1500" TextChanged="RollTextBox_TextChanged"/>
                 </StackPanel>
+
                 <Separator Style="{StaticResource HeaderSeparatorStyle}" VerticalAlignment="Stretch" Margin="0,10"/>
                 <StackPanel Orientation="Vertical" Margin="5">
-                    <TextBlock Text="Тангаж" Foreground="#A0FFFFFF" HorizontalAlignment="Center" VerticalAlignment="Top"/>
+                    <TextBlock Text="Тангаж" Foreground="#A0FFFFFF" HorizontalAlignment="Center" VerticalAlignment="Top" FontSize="11"/>
                     <TextBox x:Name="PitchTextBox" Text="1500" TextChanged="PitchTextBox_TextChanged"/>
                 </StackPanel>
+
                 <Separator Style="{StaticResource HeaderSeparatorStyle}" VerticalAlignment="Stretch" Margin="0,10"/>
                 <StackPanel Orientation="Vertical" Margin="5">
-                    <TextBlock Text="Рысканье" Foreground="#A0FFFFFF" HorizontalAlignment="Center" VerticalAlignment="Top"/>
+                    <TextBlock Text="Рыскание" Foreground="#A0FFFFFF" HorizontalAlignment="Center" VerticalAlignment="Top" FontSize="11"/>
                     <TextBox x:Name="YawTextBox" Text="1500" TextChanged="YawTextBox_TextChanged"/>
                 </StackPanel>
+
                 <Separator Style="{StaticResource HeaderSeparatorStyle}" VerticalAlignment="Stretch" Margin="0,10"/>
                 <StackPanel Orientation="Vertical" Margin="5">
-                    <TextBlock Text="Baudrate" Foreground="#A0FFFFFF" HorizontalAlignment="Center" VerticalAlignment="Top"/>
-                    <ComboBox x:Name="BaudComboBox" Width="120" Height="28" SelectionChanged="BaudComboBox_SelectionChanged"/>
+                    <TextBlock Text="Baudrate" Foreground="#A0FFFFFF" HorizontalAlignment="Center" VerticalAlignment="Top" FontSize="11"/>
+                    <Menu Background="Transparent" WindowChrome.IsHitTestVisibleInChrome="True" HorizontalAlignment="Center" VerticalAlignment="Center">
+                        <MenuItem x:Name="BaudMenuButton" Header="115200" Style="{StaticResource MenuItemStyle}">
+                            <MenuItem Header="9600" Tag="9600" Click="BaudMenuItem_Click" Style="{StaticResource SelectableMenuItemStyle}"/>
+                            <MenuItem Header="19200" Tag="19200" Click="BaudMenuItem_Click" Style="{StaticResource SelectableMenuItemStyle}"/>
+                            <MenuItem Header="38400" Tag="38400" Click="BaudMenuItem_Click" Style="{StaticResource SelectableMenuItemStyle}"/>
+                            <MenuItem Header="57600" Tag="57600" Click="BaudMenuItem_Click" Style="{StaticResource SelectableMenuItemStyle}"/>
+                            <MenuItem Header="115200" Tag="115200" Click="BaudMenuItem_Click" Style="{StaticResource SelectableMenuItemStyle}"/>
+                        </MenuItem>
+                    </Menu>
                 </StackPanel>
-                <StackPanel Orientation="Vertical" Margin="5">
-                    <TextBlock Text="Устройство" Foreground="#A0FFFFFF" HorizontalAlignment="Center" FontSize="11"/>
-                    <ComboBox x:Name="PortComboBox" Width="150" Height="28" SelectionChanged="PortComboBox_SelectionChanged"/>
-                </StackPanel>
-                <Button Style="{StaticResource HeaderButtonStyle}" Content="Старт" VerticalAlignment="Stretch" Margin="10" Click="ConnectBtn_Click"/>
+
                 <Separator Style="{StaticResource HeaderSeparatorStyle}" VerticalAlignment="Stretch" Margin="0,10"/>
                 <StackPanel Orientation="Vertical" Margin="5">
-                    <Button Style="{StaticResource HeaderButtonStyle}" Content="Настройки" VerticalAlignment="Stretch"/>
+                    <TextBlock Text="Устройство" Foreground="#A0FFFFFF" HorizontalAlignment="Center" VerticalAlignment="Top" FontSize="11"/>
+                    <Menu Background="Transparent" WindowChrome.IsHitTestVisibleInChrome="True" HorizontalAlignment="Center" VerticalAlignment="Center">
+                        <MenuItem x:Name="PortMenuButton" Header="COM9" Style="{StaticResource MenuItemStyle}">
+                            <MenuItem Header="COM9" Tag="COM9" Click="PortMenuItem_Click" Style="{StaticResource SelectableMenuItemStyle}"/>
+                            <MenuItem Header="COM8" Tag="COM8" Click="PortMenuItem_Click" Style="{StaticResource SelectableMenuItemStyle}"/>
+                        </MenuItem>
+                    </Menu>
                 </StackPanel>
-                <StackPanel Orientation="Vertical" Margin="10" MinWidth="150">
-                    <TextBlock Text="Адрес CRSF" Foreground="#A0FFFFFF" HorizontalAlignment="Center" FontSize="11"/>
-                    <DockPanel>
-                        <Button x:Name="AddAddressBtn" DockPanel.Dock="Right" Width="30" Height="28" Content="+" Click="AddAddressBtn_Click" Margin="5,0,0,0"/>
-                        <ComboBox x:Name="AddressComboBox" Height="28" SelectionChanged="AddressComboBox_SelectionChanged"/>
-                    </DockPanel>
-                </StackPanel>
+
+                <Button x:Name="ConnectBtn" Style="{StaticResource HeaderButtonStyle}" Content="Старт" VerticalAlignment="Stretch" Margin="10" Click="ConnectBtn_Click"/>
+
+                <Separator Style="{StaticResource HeaderSeparatorStyle}" VerticalAlignment="Stretch" Margin="0,10"/>
+
+                <Button Style="{StaticResource HeaderButtonStyle}" Content="Настройки" VerticalAlignment="Stretch" Margin="10"/>
             </StackPanel>
-            <Grid Grid.Row="2" Margin="12">
+            <Grid Grid.Row="2">
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="1*"/>
+                    <ColumnDefinition Width="1*"/>
                 </Grid.ColumnDefinitions>
+
                 <StackPanel Grid.Column="0" HorizontalAlignment="Center" VerticalAlignment="Center">
-                    <TextBlock Text="Левый джойстик" Foreground="White" HorizontalAlignment="Center" Margin="0,0,0,10" FontSize="12"/>
-                    <models:JoystickControl x:Name="LeftJoystick" Width="250" Height="250" Margin="0,0,20,0"/>
+                    <models:JoystickControl x:Name="LeftJoystick" Width="200" Height="200"/>
                 </StackPanel>
+
                 <StackPanel Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center">
-                    <TextBlock Text="Правый джойстик" Foreground="White" HorizontalAlignment="Center" Margin="0,0,0,10" FontSize="12"/>
-                    <models:JoystickControl x:Name="RightJoystick" Width="250" Height="250" Margin="20,0,0,0"/>
+                    <models:JoystickControl x:Name="RightJoystick" Width="200" Height="200"/>
                 </StackPanel>
             </Grid>
         </Grid>
