@@ -2,6 +2,7 @@
 using ELRSControl.Services;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Globalization;
 using System.Linq;
 using System.Net;
 using System.Runtime.CompilerServices;
@@ -9,6 +10,8 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Input;
+using System.Windows.Interop;
+using System.Windows.Media;
 using System.Windows.Threading;
 
 namespace ELRSControl
@@ -24,12 +27,16 @@ namespace ELRSControl
         private ObservableCollection<SerialPortInfo> _availablePorts = new();
         private ObservableCollection<string> _addresses = new();
         private string _selectedPort = "COM9";
+        private string _lastdPort = "COM9";
         private string _selectedBaudRate = "115200";
         private string _selectedAddress = "FF";
+        private bool _endtransmissingstatus = false;
+        private const int WM_DEVICECHANGE = 0x0219;          
+        private const int DBT_DEVICEARRIVAL = 0x8000;       
+        private const int DBT_DEVICEREMOVECOMPLETE = 0x8004;
 
         private bool _isTransmitting = false;
         private DispatcherTimer _transmitTimer;
-        private Button _startStopButton;
 
         public string MaximizeIcon
         {
@@ -46,10 +53,50 @@ namespace ELRSControl
             _transmitTimer = new DispatcherTimer();
             _transmitTimer.Interval = TimeSpan.FromMilliseconds(20);
             _transmitTimer.Tick += (s, e) => TransmitTimer_Tick();
+            this.Loaded += MainWindow_Loaded;
 
             InitializeUI();
         }
-
+        private void MainWindow_Loaded(object sender, RoutedEventArgs e)
+        {
+            IntPtr windowHandle = new WindowInteropHelper(this).Handle;
+            HwndSource src = HwndSource.FromHwnd(windowHandle);
+            src?.AddHook(new HwndSourceHook(WndProc));
+        }
+        private IntPtr WndProc(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
+        {
+            if (msg == WM_DEVICECHANGE)
+            {
+                int action = wParam.ToInt32();
+                if (action == DBT_DEVICEARRIVAL || action == DBT_DEVICEREMOVECOMPLETE)
+                {
+                    if (_isTransmitting)
+                    {
+                        StartStopSending();
+                        _endtransmissingstatus = true;
+                        ConnectBtn.Background = new SolidColorBrush(System.Windows.Media.Color.FromArgb(130, 154, 165, 54));
+                        _lastdPort = _selectedPort;
+                    }
+                    if (_selectedPort != "пусто" && !_endtransmissingstatus) _lastdPort = _selectedPort;
+                    RefreshPorts();
+                    foreach (var port in _availablePorts)
+                    {
+                        if (port.PortName == _lastdPort) 
+                        { 
+                            _selectedPort = _lastdPort;
+                            PortMenuButton.Header = _lastdPort; 
+                            if (_endtransmissingstatus)
+                            {
+                                StartStopSending();
+                                _endtransmissingstatus = false;
+                                ConnectBtn.Background = new SolidColorBrush(System.Windows.Media.Color.FromArgb(33, 255, 255, 255));
+                            }
+                        }
+                    }
+                }
+            }
+            return IntPtr.Zero;
+        }
         private void InitializeUI()
         {
             RefreshPorts();
@@ -80,8 +127,8 @@ namespace ELRSControl
             PortMenuButton.Items.Clear();
             if (_availablePorts.Count == 0)
             {
-                PortMenuButton.Header = "COM9";
-                var item = new MenuItem { Header = "No ports", IsEnabled = false };
+                PortMenuButton.Header = "пусто";
+                var item = new MenuItem { Header = "пусто", IsEnabled = false };
                 PortMenuButton.Items.Add(item);
             }
             else
@@ -205,6 +252,7 @@ namespace ELRSControl
             {
                 addItem.Visibility = Visibility.Collapsed;
                 addingitem.Visibility = Visibility.Visible;
+                AddressMenuButton.IsSubmenuOpen = true;
             };
             AddressMenuButton.Items.Add(addItem);
             addBtn.Click += (s, ea) =>
@@ -212,13 +260,21 @@ namespace ELRSControl
                 var address = addressBlock.Text.ToUpper();
                 if (!string.IsNullOrWhiteSpace(address))
                 {
-                    _configManager.AddAddress(_addresses, address);
-                    UpdateAddressMenu();
-                    _selectedAddress = address;
-                    AddressMenuButton.Header = address;
-                    addItem.Visibility = Visibility.Visible;
-                    addingitem.Visibility = Visibility.Collapsed;
+                    if (byte.TryParse(address, NumberStyles.HexNumber, CultureInfo.InvariantCulture, out byte value))
+                    {
+                        _configManager.AddAddress(_addresses, address);
+                        UpdateAddressMenu();
+                        _selectedAddress = address;
+                        AddressMenuButton.Header = address;
+                        addItem.Visibility = Visibility.Visible;
+                        addingitem.Visibility = Visibility.Collapsed;
+                    }
+                    else
+                    {
+                        addressBlock.BorderBrush = new SolidColorBrush(System.Windows.Media.Color.FromArgb(200, 232, 17, 35));
+                    }
                 }
+                AddressMenuButton.IsSubmenuOpen = true;
             };
 
         }
@@ -237,7 +293,12 @@ namespace ELRSControl
             if (sender is MenuItem menuItem && menuItem.Tag is string port)
             {
                 _selectedPort = port;
-                PortMenuButton.Header = port;
+                PortMenuButton.Header = port; 
+                if (_isTransmitting)
+                {
+                    StartStopSending();
+                    StartStopSending();
+                }
             }
         }
 
@@ -247,6 +308,11 @@ namespace ELRSControl
             {
                 _selectedBaudRate = baud;
                 BaudMenuButton.Header = baud;
+                if (_isTransmitting)
+                {
+                    StartStopSending();
+                    StartStopSending();
+                }
             }
         }
 
@@ -262,46 +328,9 @@ namespace ELRSControl
 
         private void ConnectBtn_Click(object sender, RoutedEventArgs e)
         {
-            if (!_isTransmitting)
-            {
-                if (string.IsNullOrWhiteSpace(_selectedPort) || _selectedPort == "No ports")
-                {
-                    MessageBox.Show("Пожалуйста, выберите серийный порт", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Warning);
-                    return;
-                }
-
-                try
-                {
-                    if (!int.TryParse(_selectedBaudRate, out int baudRate))
-                    {
-                        baudRate = 115200;
-                    }
-
-                    if (_portManager.OpenPort(_selectedPort, baudRate))
-                    {
-                        _isTransmitting = true;
-                        _transmitTimer.Start();
-                        ConnectBtn.Content = "Стоп";
-                        System.Diagnostics.Debug.WriteLine($"Передача начата на {_selectedPort} ({baudRate} baud)");
-                    }
-                    else
-                    {
-                        MessageBox.Show($"Не удалось открыть порт {_selectedPort}", "Ошибка подключения", MessageBoxButton.OK, MessageBoxImage.Error);
-                    }
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show($"Ошибка при открытии порта: {ex.Message}", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
-                }
-            }
-            else
-            {
-                _transmitTimer.Stop();
-                _isTransmitting = false;
-                _portManager.ClosePort();
-                ConnectBtn.Content = "Старт";
-                System.Diagnostics.Debug.WriteLine("Передача остановлена");
-            }
+            if (_isTransmitting) _endtransmissingstatus = false;
+            ConnectBtn.Background = new SolidColorBrush(System.Windows.Media.Color.FromArgb(33, 255, 255, 255));
+            StartStopSending();
         }
 
         private void LeftJoystick_PropertyChanged(object sender, PropertyChangedEventArgs e)
@@ -367,7 +396,14 @@ namespace ELRSControl
         private void MaximizeBtn_Click(object sender, RoutedEventArgs e) =>
             this.WindowState = this.WindowState == WindowState.Maximized ? WindowState.Normal : WindowState.Maximized;
 
-        private void CloseBtn_Click(object sender, RoutedEventArgs e) => this.Close();
+        private void CloseBtn_Click(object sender, RoutedEventArgs e) 
+        {
+            if (_isTransmitting)
+            {
+                StartStopSending();
+            }
+            this.Close();
+        }
 
         private void TransmitTimer_Tick()
         {
@@ -394,5 +430,58 @@ namespace ELRSControl
         public event PropertyChangedEventHandler PropertyChanged;
         protected void OnPropertyChanged([CallerMemberName] string name = null) =>
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
+
+        private void BaudBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            _selectedBaudRate = BaudBox.Text;
+            BaudMenuButton.Header = BaudBox.Text;
+            if (_isTransmitting)
+            {
+                StartStopSending();
+            }
+        }
+
+        private void StartStopSending() 
+        {
+            if (!_isTransmitting)
+            {
+                if (string.IsNullOrWhiteSpace(_selectedPort) || _selectedPort == "пусто")
+                {
+                    MessageBox.Show("Пожалуйста, выберите серийный порт", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    return;
+                }
+
+                try
+                {
+                    if (!int.TryParse(_selectedBaudRate, out int baudRate))
+                    {
+                        baudRate = 115200;
+                    }
+                    if (_portManager.OpenPort(_selectedPort, baudRate))
+                    {
+                        _isTransmitting = true;
+                        _transmitTimer.Start();
+                        ConnectBtn.Content = "Стоп";
+                        System.Diagnostics.Debug.WriteLine($"Передача начата на {_selectedPort} ({baudRate} baud)");
+                    }
+                    else
+                    {
+                        MessageBox.Show($"Не удалось открыть порт {_selectedPort}", "Ошибка подключения", MessageBoxButton.OK, MessageBoxImage.Error);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Ошибка при открытии порта: {ex.Message}", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+            }
+            else
+            {
+                _transmitTimer.Stop();
+                _isTransmitting = false;
+                _portManager.ClosePort();
+                ConnectBtn.Content = "Старт";
+                System.Diagnostics.Debug.WriteLine("Передача остановлена");
+            }
+        }
     }
 }

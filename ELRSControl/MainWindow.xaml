@@ -7,7 +7,7 @@
         xmlns:models="clr-namespace:ELRSControl.Models"
         mc:Ignorable="d"
         MouseMove="Window_MouseMove"
-        Title="ELRS Control - CRSF" Height="450" Width="800" WindowStyle="None" AllowsTransparency="True">
+        Title="ELRS Control - CRSF" MinHeight="383" MinWidth="669" WindowStyle="None" AllowsTransparency="True">
 	<WindowChrome.WindowChrome>
 		<WindowChrome CaptionHeight="40" GlassFrameThickness="0" CornerRadius="12" ResizeBorderThickness="6"/>
 	</WindowChrome.WindowChrome>
@@ -264,7 +264,8 @@
 							<MenuItem Header="38400" Tag="38400" Click="BaudMenuItem_Click" Style="{StaticResource SelectableMenuItemStyle}"/>
 							<MenuItem Header="57600" Tag="57600" Click="BaudMenuItem_Click" Style="{StaticResource SelectableMenuItemStyle}"/>
 							<MenuItem Header="115200" Tag="115200" Click="BaudMenuItem_Click" Style="{StaticResource SelectableMenuItemStyle}"/>
-						</MenuItem>
+                            <TextBox x:Name="BaudBox" Text="115200" Tag="6969" TextChanged="BaudBox_TextChanged" HorizontalAlignment="Left" Margin="0" MinWidth="50" Width="auto"/>
+                        </MenuItem>
 					</Menu>
 				</StackPanel>
 
@@ -273,7 +274,7 @@
 				<StackPanel Orientation="Vertical" Margin="5">
 					<TextBlock Text="Устройство" Foreground="#A0FFFFFF" HorizontalAlignment="Center" VerticalAlignment="Top" FontSize="11"/>
 					<Menu Background="Transparent" WindowChrome.IsHitTestVisibleInChrome="True" HorizontalAlignment="Center" VerticalAlignment="Center">
-						<MenuItem x:Name="PortMenuButton" Header="COM9" Style="{StaticResource MenuItemStyle}">
+						<MenuItem x:Name="PortMenuButton" Header="Пусто" Style="{StaticResource MenuItemStyle}">
 							<MenuItem Header="COM9" Tag="COM9" Click="PortMenuItem_Click" Style="{StaticResource SelectableMenuItemStyle}"/>
 							<MenuItem Header="COM8" Tag="COM8" Click="PortMenuItem_Click" Style="{StaticResource SelectableMenuItemStyle}"/>
 						</MenuItem>
@@ -294,11 +295,15 @@
 				</Grid.ColumnDefinitions>
 
 				<StackPanel Grid.Column="0" HorizontalAlignment="Center" VerticalAlignment="Center">
-					<models:JoystickControl x:Name="RightJoystick" Width="200" Height="200"/>
+                    <Viewbox>
+                        <models:JoystickControl x:Name="RightJoystick" Width="200" Height="200"/>
+                    </Viewbox>
 				</StackPanel>
 
 				<StackPanel Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center">
-					<models:JoystickControl x:Name="LeftJoystick" Width="200" Height="200"/>
+                    <Viewbox>
+                        <models:JoystickControl x:Name="LeftJoystick" Width="200" Height="200"/>
+                    </Viewbox>
 				</StackPanel>
 			</Grid>
 		</Grid>

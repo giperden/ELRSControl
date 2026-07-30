@@ -8,8 +8,10 @@
              Width="200" Height="200">
     <Grid x:Name="MainGrid" ClipToBounds="True">
         <Canvas x:Name="JoystickCanvas" MouseDown="JoystickCanvas_MouseDown" MouseMove="JoystickCanvas_MouseMove" MouseUp="JoystickCanvas_MouseUp" MouseLeave="JoystickCanvas_MouseLeave">
-            <Line X1="25" Y1="100" X2="175" Y2="100" Stroke="#25FFFFFF" StrokeThickness="1"/>
-            <Line X1="100" Y1="25" X2="100" Y2="175" Stroke="#25FFFFFF" StrokeThickness="1"/>
+            <Line X1="26" X2="75" Y1="100" Y2="100" Stroke="#25FFFFFF" StrokeThickness="1"/>
+			<Line X1="125" X2="174" Y1="100" Y2="100" Stroke="#25FFFFFF" StrokeThickness="1"/>
+			<Line X1="100"  X2="100" Y1="26" Y2="75" Stroke="#25FFFFFF" StrokeThickness="1"/>
+			<Line X1="100"  X2="100" Y1="125" Y2="174" Stroke="#25FFFFFF" StrokeThickness="1"/>
 
 			<Ellipse Canvas.Left="25" Canvas.Top="25" Width="150" Height="150" Stroke="#15FFFFFF" StrokeThickness="2">
 				<Ellipse.Fill>
