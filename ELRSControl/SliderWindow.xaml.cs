@@ -416,6 +416,7 @@ namespace ELRSControl
             BaudMenuButton.Header = BaudBox.Text;
             if (GlobalStates._isTransmitting)
             {
+
                 StartStopSending();
             }
         }
