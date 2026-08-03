@@ -105,4 +105,16 @@ namespace ELRSControl.Services
             public List<string> CustomAddresses { get; set; } = new List<string>();
         }
     }
+    public class GlobalStates 
+    {
+        public static bool _endtransmissingstatus { get; set; } = false;
+        public static bool _isTransmitting { get; set; } = false;
+        public static string _selectedPort { get; set; } = "COM9";
+        public static string _lastdPort { get; set; } = "COM9";
+        public static string _selectedBaudRate { get; set; } = "115200";
+        public static string _selectedAddress { get; set; } = "FF";
+        public const int WM_DEVICECHANGE  = 0x0219;
+        public const int DBT_DEVICEARRIVAL = 0x8000;
+        public const int DBT_DEVICEREMOVECOMPLETE = 0x8004;
+    }
 }

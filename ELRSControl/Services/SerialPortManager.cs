@@ -103,14 +103,14 @@ namespace ELRSControl.Services
         /// <summary>
         /// Отправляет CRSF пакет с данными управления
         /// </summary>
-        public bool SendCRSFPacket(byte address, ushort roll, ushort pitch, ushort yaw, ushort throttle)
+        public bool SendCRSFPacket(byte address, ushort roll, ushort pitch, ushort yaw, ushort throttle, ushort[] chanels)
         {
             if (_port == null || !_port.IsOpen)
                 return false;
 
             try
             {
-                var packet = CrsfBuilder.PackChannels(roll, pitch, yaw, throttle, address);
+                var packet = CrsfBuilder.PackChannels(roll, pitch, yaw, throttle, address, chanels);
                 _port.Write(packet, 0, packet.Length);
                 return true;
             }
@@ -209,15 +209,16 @@ namespace ELRSControl.Services
             /// Значения roll/pitch/yaw/throttle — PWM в микросекундах (1000..2000).
             /// Остальные каналы (4..15) заполняются центром (0.5 нормированного диапазона).
             /// </summary>
-            public static byte[] PackChannels(int roll, int pitch, int yaw, int throttle, byte deviceAddr)
+            public static byte[] PackChannels(int roll, int pitch, int yaw, int throttle, byte deviceAddr, ushort[] chanels)
             {
                 int[] chVals = new int[CRSF_CHANNELS];
                 chVals[0] = UsToCrsf(throttle);
                 chVals[1] = UsToCrsf(yaw);
                 chVals[2] = UsToCrsf(roll);
                 chVals[3] = UsToCrsf(pitch);
-                for (int i = 4; i < CRSF_CHANNELS; i++)
-                    chVals[i] = CrsfScale(0.5);
+
+                for (int i=0; i<chanels.Length; i++)
+                    chVals[i+4] = UsToCrsf(chanels[i]);
 
                 byte[] payload = Pack11Bits(chVals);
                 int frameSize = payload.Length + 2; // type + crc
