@@ -35,6 +35,7 @@ namespace ELRSControl
         private const int DBT_DEVICEARRIVAL = 0x8000;       
         private const int DBT_DEVICEREMOVECOMPLETE = 0x8004;
 
+        private Button currentActiveTab = null;
         private bool _isTransmitting = false;
         private DispatcherTimer _transmitTimer;
 
@@ -81,10 +82,10 @@ namespace ELRSControl
                     RefreshPorts();
                     foreach (var port in _availablePorts)
                     {
-                        if (port.PortName == _lastdPort) 
-                        { 
+                        if (port.PortName == _lastdPort)
+                        {
                             _selectedPort = _lastdPort;
-                            PortMenuButton.Header = _lastdPort; 
+                            PortMenuButton.Header = _lastdPort;
                             if (_endtransmissingstatus)
                             {
                                 StartStopSending();
@@ -101,13 +102,14 @@ namespace ELRSControl
         {
             RefreshPorts();
 
-                _addresses.Add("FF");
-                _addresses.Add("C8");
+
+            _addresses.Add("FF");
+            _addresses.Add("C8");
             var customAddresses = _configManager.LoadCustomAddresses();
             foreach (var addr in customAddresses)
             {
                 if (addr != "C8" && addr != "FF")
-                _addresses.Add(addr);
+                    _addresses.Add(addr);
             }
 
             UpdateAddressMenu();
@@ -293,7 +295,7 @@ namespace ELRSControl
             if (sender is MenuItem menuItem && menuItem.Tag is string port)
             {
                 _selectedPort = port;
-                PortMenuButton.Header = port; 
+                PortMenuButton.Header = port;
                 if (_isTransmitting)
                 {
                     StartStopSending();
@@ -396,7 +398,7 @@ namespace ELRSControl
         private void MaximizeBtn_Click(object sender, RoutedEventArgs e) =>
             this.WindowState = this.WindowState == WindowState.Maximized ? WindowState.Normal : WindowState.Maximized;
 
-        private void CloseBtn_Click(object sender, RoutedEventArgs e) 
+        private void CloseBtn_Click(object sender, RoutedEventArgs e)
         {
             if (_isTransmitting)
             {
@@ -416,10 +418,11 @@ namespace ELRSControl
                 ushort pitch = (ushort)LeftJoystick.YValue;
                 ushort yaw = (ushort)RightJoystick.XValue;
                 ushort throttle = (ushort)RightJoystick.YValue;
+                ushort[] ch = { (ushort)Ch4Slider.Value, (ushort)Ch5Slider.Value, (ushort)Ch6Slider.Value, (ushort)Ch7Slider.Value, (ushort)Ch8Slider.Value, (ushort)Ch9Slider.Value, (ushort)Ch10Slider.Value, (ushort)Ch11Slider.Value, (ushort)Ch12Slider.Value, (ushort)Ch13Slider.Value, (ushort)Ch14Slider.Value, (ushort)Ch15Slider.Value };
 
                 byte address = byte.Parse(_selectedAddress, System.Globalization.NumberStyles.HexNumber);
 
-                _portManager.SendCRSFPacket(address, roll, pitch, yaw, throttle);
+                _portManager.SendCRSFPacket(address, roll, pitch, yaw, throttle, ch);
             }
             catch (Exception ex)
             {
@@ -441,7 +444,7 @@ namespace ELRSControl
             }
         }
 
-        private void StartStopSending() 
+        private void StartStopSending()
         {
             if (!_isTransmitting)
             {
@@ -482,6 +485,35 @@ namespace ELRSControl
                 ConnectBtn.Content = "Старт";
                 System.Diagnostics.Debug.WriteLine("Передача остановлена");
             }
+        }
+
+        private void Menu_Drop_Click(object sender, RoutedEventArgs e)
+        {
+            var button = sender as Button;
+            var opend = TopMenu.CornerRadius = new CornerRadius(10, 10, 0, 10);
+            var clsed = new CornerRadius(10, 10, 10, 10);
+            if (RightMenu.Visibility == Visibility.Visible)
+            {
+                RightMenu.Visibility = Visibility.Collapsed;
+                RightMenuContent.Visibility = Visibility.Collapsed;
+                TopMenu.CornerRadius = clsed;
+                Grid.SetColumnSpan(Joystick, 2);
+                button.Content = "\uE70D";
+            }
+            else
+            {
+                RightMenu.Visibility = Visibility.Visible;
+                RightMenuContent.Visibility = Visibility.Visible;
+                TopMenu.CornerRadius = opend;
+                Grid.SetColumnSpan(Joystick, 1);
+                button.Content = "\uE70E";
+            }
+        }
+
+        private void SliderWindow_Click(object sender, RoutedEventArgs e)
+        {
+            SliderWindow Win1 = new SliderWindow();
+            Win1.Show();
         }
     }
 }
