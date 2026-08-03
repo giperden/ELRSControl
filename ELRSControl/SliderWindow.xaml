@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:ELRSControl"
         mc:Ignorable="d"
-        Title="SliderWindow" Height="450" Width="800" WindowStyle="None" AllowsTransparency="True">
+        Title="SliderWindow" Height="450" Width="1800" WindowStyle="None" AllowsTransparency="True">
     <WindowChrome.WindowChrome>
         <WindowChrome CaptionHeight="40" GlassFrameThickness="0" CornerRadius="20" ResizeBorderThickness="6"/>
     </WindowChrome.WindowChrome>
@@ -173,13 +173,63 @@
             </StackPanel>
 
             <Grid Grid.Row="2" Margin="12,0,12,12">
-                <StackPanel Orientation="Horizontal">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="1*"/>
+                    <ColumnDefinition Width="1*"/>
+                    <ColumnDefinition Width="1*"/>
+                    <ColumnDefinition Width="1*"/>
+                    <ColumnDefinition Width="1*"/>
+                    <ColumnDefinition Width="1*"/>
+                    <ColumnDefinition Width="1*"/>
+                    <ColumnDefinition Width="1*"/>
+                    <ColumnDefinition Width="1*"/>
+                    <ColumnDefinition Width="1*"/>
+                    <ColumnDefinition Width="1*"/>
+                    <ColumnDefinition Width="1*"/>
+                    <ColumnDefinition Width="1*"/>
+                    <ColumnDefinition Width="1*"/>
+                    <ColumnDefinition Width="1*"/>
+                    <ColumnDefinition Width="1*"/>
+                </Grid.ColumnDefinitions>
+                <Rectangle Grid.Column="0" Fill="#0AFFFFFF" Margin="12,12,12,12" RadiusX="12" RadiusY="12" />
+                <StackPanel Grid.Column="0" Orientation="Horizontal" Margin="12,12,12,12">
                     <StackPanel>
-                        <Label Content="Канал 13" Foreground="#A0FFFFFF"  HorizontalAlignment="Center" VerticalAlignment="Top" FontSize="11"/>
-                        <Slider x:Name="Ch12Slider" Orientation="Vertical" Height="100" Style="{StaticResource ThreePositionSliderStyle}" Value="1500" />
-                        <TextBox Text="1500"/>
+                        <Label Content="Канал 0" Foreground="#A0FFFFFF"  HorizontalAlignment="Center" VerticalAlignment="Top" FontSize="11"/>
+                        <Slider x:Name="Ch0Slider" Orientation="Vertical" Height="100" Style="{StaticResource ThreePositionSliderStyle}" Value="1500" />
+                        <TextBox x:Name="Ch0Text" Text="1500"/>
                     </StackPanel>
                 </StackPanel>
+                <Rectangle Grid.Column="1" Fill="#0AFFFFFF" Margin="12,12,12,12" RadiusX="12" RadiusY="12" />
+                <StackPanel Grid.Column="1" Orientation="Horizontal" Margin="12,12,12,12">
+                    <StackPanel>
+                        <Label Content="Канал 1" Foreground="#A0FFFFFF"  HorizontalAlignment="Center" VerticalAlignment="Top" FontSize="11"/>
+                        <Slider x:Name="Ch1Slider" Orientation="Vertical" Height="100" Style="{StaticResource ThreePositionSliderStyle}" Value="1500" />
+                        <TextBox x:Name="Ch1Text" Text="1500"/>
+                    </StackPanel>
+                </StackPanel>
+                <Rectangle Grid.Column="2" Fill="#0AFFFFFF" Margin="12,12,12,12" RadiusX="12" RadiusY="12" />
+                <StackPanel Grid.Column="2" Orientation="Horizontal" Margin="12,12,12,12">
+                    <StackPanel>
+                        <Label Content="Канал 2" Foreground="#A0FFFFFF"  HorizontalAlignment="Center" VerticalAlignment="Top" FontSize="11"/>
+                        <Slider x:Name="Ch2Slider" Orientation="Vertical" Height="100" Style="{StaticResource ThreePositionSliderStyle}" Value="1500" />
+                        <TextBox x:Name="Ch2Text" Text="1500"/>
+                    </StackPanel>
+                </StackPanel>
+                <Rectangle Grid.Column="3" Fill="#0AFFFFFF" Margin="12,12,12,12" RadiusX="12" RadiusY="12" />
+                <StackPanel Grid.Column="3" Orientation="Horizontal" Margin="12,12,12,12">
+                    <StackPanel>
+                        <Label Content="Канал 3" Foreground="#A0FFFFFF"  HorizontalAlignment="Center" VerticalAlignment="Top" FontSize="11"/>
+                        <Slider x:Name="Ch3Slider" Orientation="Vertical" Height="100" Style="{StaticResource ThreePositionSliderStyle}" Value="1500" />
+                        <TextBox x:Name="Ch3Text" Text="1500"/>
+                    </StackPanel>
+                </StackPanel>
+
+
+
+
+
+
+
             </Grid>
         </Grid>
     </Grid>
