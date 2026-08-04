@@ -92,11 +92,11 @@ jobs:
         - name: Build Application
       run: dotnet build ${{ env.Wpf_Project_Path }} --configuration Release
 
-    # Вместо сертификатов просто упаковываем готовую сборку в ZIP
+    # ZIP packing
     - name: Pack Build Artifacts
       run: Compress-Archive -Path "D:\a\ELRSControl\ELRSControl\ELRSControl\bin\Release\net10.0-windows\*" -DestinationPath "app-build.zip"
 
-    # Загружаем готовый архив в артефакты GitHub Actions
+    # gitload
     - name: Upload Build Artifacts
       uses: actions/upload-artifact@v4
       with:
