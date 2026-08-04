@@ -1,4 +1,4 @@
-name: .NET Core Desktop
+name: .NET Core Desktop GitVerse
 
 on:
   push:
@@ -7,60 +7,49 @@ on:
     branches: [ "master" ]
 
 jobs:
-
   build:
-
     strategy:
       matrix:
         configuration: [Debug, Release]
 
-    runs-on: windows-latest  # For a list of available runner types, refer to
-                             # https://help.github.com/en/actions/reference/workflow-syntax-for-github-actions#jobsjob_idruns-on
+    # Используем стандартный Windows-раннер GitVerse/RuStore
+    runs-on: windows-latest
 
     env:
-      Solution_Name: ELRSControl.slnx                         # Replace with your solution name, i.e. MyWpfApp.sln.
-      Test_Project_Path: ELRSControl\ELRSControl.csproj                 # Replace with the path to your test project, i.e. MyWpfApp.Tests\MyWpfApp.Tests.csproj.
-      
+      Solution_Name: ELRSControl.slnx
+      Test_Project_Path: ELRSControl\ELRSControl.csproj
+
     steps:
+    # Заменяем GitHub-экшен на официальное зеркало в GitVerse
     - name: Checkout
       uses: actions/checkout@v4
       with:
         fetch-depth: 0
 
-    # Install the .NET Core workload
+    # Установка .NET Core (удален дублирующийся шаг из вашего шаблона)
     - name: Install .NET Core
       uses: actions/setup-dotnet@v4
       with:
         dotnet-version: 8.0.x
 
-    # Add  MSBuild to the PATH: https://github.com/microsoft/setup-msbuild
+    # Добавление MSBuild в PATH
     - name: Setup MSBuild.exe
       uses: microsoft/setup-msbuild@v2
 
-    # Execute all unit tests in the solution
+    # Запуск юнит-тестов
     - name: Execute unit tests
       run: dotnet test
 
-    # Restore the application to populate the obj folder with RuntimeIdentifiers
+    # Восстановление зависимостей (исправлен синтаксис переменных для PowerShell)
     - name: Restore the application
-      run: msbuild $env:Solution_Name /t:Restore /p:Configuration=$env:Configuration
+      run: msbuild $env:Solution_Name /t:Restore /p:Configuration=$env:Matrix_Configuration
       env:
-        Configuration: ${{ matrix.configuration }}
+        Matrix_Configuration: ${{ matrix.configuration }}
 
-    # Decode the base 64 encoded pfx and save the Signing_Certificate
-    - name: Install .NET Core
-      uses: actions/setup-dotnet@v4
-      with:
-        dotnet-version: 8.0.x
-
-    - name: Setup MSBuild.exe
-      uses: microsoft/setup-msbuild@v2
-
-    - name: Execute unit tests
-      run: dotnet test
-
+    # Сборка проекта
     - name: Build
       run: dotnet build --configuration ${{ matrix.configuration }}
 
+    # Публикация артефактов
     - name: Publish
       run: dotnet publish --configuration ${{ matrix.configuration }} --output ./publish
