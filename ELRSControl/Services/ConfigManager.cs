@@ -113,8 +113,8 @@ namespace ELRSControl.Services
         public static string _lastdPort { get; set; } = "COM9";
         public static string _selectedBaudRate { get; set; } = "115200";
         public static string _selectedAddress { get; set; } = "FF";
-        public const int WM_DEVICECHANGE = 0x0219;
-        public const int DBT_DEVICEARRIVAL = 0x8000;
+        public const int WM_DEVICECHANGE = 0x0219;          
+        public const int DBT_DEVICEARRIVAL = 0x8000;      
         public const int DBT_DEVICEREMOVECOMPLETE = 0x8004;
     }
 }

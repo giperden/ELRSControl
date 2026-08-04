@@ -223,13 +223,6 @@
                         <TextBox x:Name="Ch3Text" Text="1500"/>
                     </StackPanel>
                 </StackPanel>
-
-
-
-
-
-
-
             </Grid>
         </Grid>
     </Grid>

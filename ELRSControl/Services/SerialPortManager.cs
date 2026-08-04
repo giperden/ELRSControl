@@ -123,7 +123,6 @@ namespace ELRSControl.Services
 
         /// <summary>
         /// Формирует CRSF пакет управления
-        /// Формат: [Адрес][Длина][Тип][Ch0:11bits][Ch1:11bits]...[CRC]
         /// </summary>
         public static class CrsfBuilder
         {
@@ -206,8 +205,6 @@ namespace ELRSControl.Services
 
             /// <summary>
             /// Создаёт полный CRSF кадр для отправки на полётный контроллер.
-            /// Значения roll/pitch/yaw/throttle — PWM в микросекундах (1000..2000).
-            /// Остальные каналы (4..15) заполняются центром (0.5 нормированного диапазона).
             /// </summary>
             public static byte[] PackChannels(int roll, int pitch, int yaw, int throttle, byte deviceAddr, ushort[] chanels)
             {
@@ -217,12 +214,11 @@ namespace ELRSControl.Services
                 chVals[2] = UsToCrsf(roll);
                 chVals[3] = UsToCrsf(pitch);
 
-                // Остальные каналы (4..15) — нейтраль 1500 мкс
                 for (int i = 0; i < chanels.Length; i++)
                     chVals[i + 4] = UsToCrsf(chanels[i]);
 
                 byte[] payload = Pack11Bits(chVals);
-                int frameSize = payload.Length + 2; // type + crc
+                int frameSize = payload.Length + 2; 
                 byte frameType = CRSF_FRAMETYPE_RC_CHANNELS_PACKED;
                 var crcInput = new byte[1 + payload.Length];
                 crcInput[0] = frameType;
@@ -238,16 +234,6 @@ namespace ELRSControl.Services
 
                 return frame;
             }
-        }
-
-        /// <summary>
-        /// Масштабирует канал с диапазона 1000-2000 на CRSF диапазон 988-2047
-        /// </summary>
-        private ushort ScaleChannel(ushort value)
-        {
-            if (value < 1000) value = 1000;
-            if (value > 2000) value = 2000;
-            return (ushort)(988 + (value - 1000) * 1.059f);
         }
     }
 

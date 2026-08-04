@@ -254,12 +254,11 @@ namespace ELRSControl
             for (int i = 0; i < _addresses.Count; i++)
             {
                 var address = _addresses[i];
-                bool isCustom = i >= 2;
+                bool isCustom = i >= 2; 
 
                 if (isCustom)
                 {
                     var dockPanel = new DockPanel();
-
                     var deleteBtn = new Button
                     {
                         Content = "✕",
@@ -273,7 +272,6 @@ namespace ELRSControl
                     deleteBtn.Click += (s, e) => DeleteAddress_Click(address);
                     DockPanel.SetDock(deleteBtn, Dock.Right);
                     dockPanel.Children.Add(deleteBtn);
-
                     var textBlock = new TextBlock
                     {
                         Text = address,
@@ -305,13 +303,9 @@ namespace ELRSControl
                     AddressMenuButton.Items.Add(item);
                 }
             }
-
             AddressMenuButton.Items.Add(new Separator());
-
             MenuItem addingitem = null;
-
             var AddDockPanel = new DockPanel();
-
             var addressBlock = new TextBox
             {
                 Text = "AA",
@@ -321,7 +315,6 @@ namespace ELRSControl
             };
             DockPanel.SetDock(addressBlock, Dock.Left);
             AddDockPanel.Children.Add(addressBlock);
-
             var addBtn = new Button
             {
                 Content = "+",
@@ -334,7 +327,6 @@ namespace ELRSControl
             };
             DockPanel.SetDock(addBtn, Dock.Right);
             AddDockPanel.Children.Add(addBtn);
-
             addingitem = new MenuItem
             {
                 Header = AddDockPanel,
@@ -343,7 +335,6 @@ namespace ELRSControl
             };
             addingitem.Click += AddressMenuItem_Click;
             AddressMenuButton.Items.Add(addingitem);
-
             var addItem = new MenuItem
             {
                 Header = "Добавить",
@@ -356,7 +347,6 @@ namespace ELRSControl
                 AddressMenuButton.IsSubmenuOpen = true;
             };
             AddressMenuButton.Items.Add(addItem);
-
             addBtn.Click += (s, ea) =>
             {
                 var address = addressBlock.Text.ToUpper();
@@ -419,6 +409,5 @@ namespace ELRSControl
                 StartStopSending();
             }
         }
-
     }
 }

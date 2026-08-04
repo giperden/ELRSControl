@@ -34,7 +34,6 @@ namespace ELRSControl
         private const int WM_DEVICECHANGE = 0x0219;          
         private const int DBT_DEVICEARRIVAL = 0x8000;       
         private const int DBT_DEVICEREMOVECOMPLETE = 0x8004;
-
         private Button currentActiveTab = null;
         private bool _isTransmitting = false;
         private DispatcherTimer _transmitTimer;
@@ -50,7 +49,6 @@ namespace ELRSControl
             InitializeComponent();
             this.DataContext = this;
             this.StateChanged += MainWindow_StateChanged;
-
             _transmitTimer = new DispatcherTimer();
             _transmitTimer.Interval = TimeSpan.FromMilliseconds(20);
             _transmitTimer.Tick += (s, e) => TransmitTimer_Tick();
@@ -101,8 +99,6 @@ namespace ELRSControl
         private void InitializeUI()
         {
             RefreshPorts();
-
-
             _addresses.Add("FF");
             _addresses.Add("C8");
             var customAddresses = _configManager.LoadCustomAddresses();
@@ -111,9 +107,7 @@ namespace ELRSControl
                 if (addr != "C8" && addr != "FF")
                     _addresses.Add(addr);
             }
-
             UpdateAddressMenu();
-
             LeftJoystick.PropertyChanged += LeftJoystick_PropertyChanged;
             RightJoystick.PropertyChanged += RightJoystick_PropertyChanged;
         }
@@ -161,12 +155,11 @@ namespace ELRSControl
             for (int i = 0; i < _addresses.Count; i++)
             {
                 var address = _addresses[i];
-                bool isCustom = i >= 2;
+                bool isCustom = i >= 2; 
 
                 if (isCustom)
                 {
                     var dockPanel = new DockPanel();
-
                     var deleteBtn = new Button
                     {
                         Content = "✕",
@@ -180,7 +173,6 @@ namespace ELRSControl
                     deleteBtn.Click += (s, e) => DeleteAddress_Click(address);
                     DockPanel.SetDock(deleteBtn, Dock.Right);
                     dockPanel.Children.Add(deleteBtn);
-
                     var textBlock = new TextBlock
                     {
                         Text = address,
@@ -212,7 +204,6 @@ namespace ELRSControl
                     AddressMenuButton.Items.Add(item);
                 }
             }
-
             AddressMenuButton.Items.Add(new Separator());
             MenuItem addingitem = null;
             var AddDockPanel = new DockPanel();
@@ -374,7 +365,6 @@ namespace ELRSControl
             if (RightJoystick != null && int.TryParse(ThrottleTextBox.Text, out int value))
                 RightJoystick.YValue = value;
         }
-
         private void Window_MouseMove(object sender, MouseEventArgs e)
         {
             Point mousePos = e.GetPosition(this);
@@ -421,7 +411,6 @@ namespace ELRSControl
                 ushort[] ch = { (ushort)Ch4Slider.Value, (ushort)Ch5Slider.Value, (ushort)Ch6Slider.Value, (ushort)Ch7Slider.Value, (ushort)Ch8Slider.Value, (ushort)Ch9Slider.Value, (ushort)Ch10Slider.Value, (ushort)Ch11Slider.Value, (ushort)Ch12Slider.Value, (ushort)Ch13Slider.Value, (ushort)Ch14Slider.Value, (ushort)Ch15Slider.Value };
 
                 byte address = byte.Parse(_selectedAddress, System.Globalization.NumberStyles.HexNumber);
-
                 _portManager.SendCRSFPacket(address, roll, pitch, yaw, throttle, ch);
             }
             catch (Exception ex)
