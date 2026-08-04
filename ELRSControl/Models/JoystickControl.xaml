@@ -11,16 +11,18 @@
             <Line X1="26" X2="75" Y1="100" Y2="100" Stroke="#25FFFFFF" StrokeThickness="1"/>
 			<Line X1="125" X2="174" Y1="100" Y2="100" Stroke="#25FFFFFF" StrokeThickness="1"/>
 			<Line X1="100"  X2="100" Y1="26" Y2="75" Stroke="#25FFFFFF" StrokeThickness="1"/>
-            <Line X1="100"  X2="100" Y1="125" Y2="174" Stroke="#25FFFFFF" StrokeThickness="1"/>
-            <Ellipse Canvas.Left="25" Canvas.Top="25" Width="150" Height="150" Stroke="#15FFFFFF" StrokeThickness="2">
-                <Ellipse.Fill>
-                    <RadialGradientBrush>
-                        <GradientStop Color="#20000000"/>
-                        <GradientStop Color="#35FFFFFF" Offset="1"/>
-                    </RadialGradientBrush>
-                </Ellipse.Fill>
-            </Ellipse>
-            <Ellipse x:Name="JoystickKnob" Canvas.Left="85" Canvas.Top="85" Width="30" Height="30" StrokeThickness="2" Cursor="Hand">
+			<Line X1="100"  X2="100" Y1="125" Y2="174" Stroke="#25FFFFFF" StrokeThickness="1"/>
+
+			<Ellipse Canvas.Left="25" Canvas.Top="25" Width="150" Height="150" Stroke="#15FFFFFF" StrokeThickness="2">
+				<Ellipse.Fill>
+					<RadialGradientBrush>
+						<GradientStop Color="#20000000"/>
+						<GradientStop Color="#35FFFFFF" Offset="1"/>
+					</RadialGradientBrush>
+				</Ellipse.Fill>
+			</Ellipse>
+
+			<Ellipse x:Name="JoystickKnob" Canvas.Left="85" Canvas.Top="85" Width="30" Height="30" StrokeThickness="2" Cursor="Hand">
 				<Ellipse.Fill>
 					<RadialGradientBrush>
 						<GradientStop Color="#20000000"/>

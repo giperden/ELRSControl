@@ -235,6 +235,17 @@ namespace ELRSControl.Services
                 return frame;
             }
         }
+
+        /// <summary>
+        /// Масштабирует канал с диапазона 1000-2000 на CRSF диапазон 988-2047
+        /// </summary>
+        private ushort ScaleChannel(ushort value)
+        {
+            if (value < 1000) value = 1000;
+            if (value > 2000) value = 2000;
+
+            return (ushort)(988 + (value - 1000) * 1.059f);
+        }
     }
 
     /// <summary>
