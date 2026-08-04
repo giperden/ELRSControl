@@ -89,15 +89,16 @@ jobs:
 
         [IO.File]::WriteAllBytes("$certificatePath", $pfx_cert_byte)
 
-    # Create the app package by building and packaging the Windows Application Packaging project
-    - name: Create the app package
-      run: msbuild $env:Wap_Project_Path /p:Configuration=$env:Configuration /p:UapAppxPackageBuildMode=$env:Appx_Package_Build_Mode /p:AppxBundle=$env:Appx_Bundle /p:PackageCertificateKeyFile=GitHubActionsWorkflow.pfx /p:PackageCertificatePassword=${{ secrets.Pfx_Key }}
-      env:
-        Appx_Bundle: Always
-        Appx_Bundle_Platforms: x86|x64
-        Appx_Package_Build_Mode: StoreUpload
-        Configuration: ${{ matrix.configuration }}
+        - name: Build Application
+      run: dotnet build ${{ env.Wpf_Project_Path }} --configuration Release
 
-    # Remove the pfx
-    - name: Remove the pfx
-      run: Remove-Item -path $env:Wap_Project_Directory\GitHubActionsWorkflow.pfx
+    # Вместо сертификатов просто упаковываем готовую сборку в ZIP
+    - name: Pack Build Artifacts
+      run: Compress-Archive -Path "D:\a\ELRSControl\ELRSControl\ELRSControl\bin\Release\net10.0-windows\*" -DestinationPath "app-build.zip"
+
+    # Загружаем готовый архив в артефакты GitHub Actions
+    - name: Upload Build Artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: wpf-app-build
+        path: app-build.zip
