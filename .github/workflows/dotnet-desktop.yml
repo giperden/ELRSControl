@@ -87,11 +87,6 @@ jobs:
       env:
         Configuration: ${{ matrix.configuration }}
 
-    # Say gex
-    - name: Create package directory
-      run: mkdir - p "D:\a\ELRSControl\ELRSControlELRScontrol\Package"
-      shell: bash
-
     # Decode the base 64 encoded pfx and save the Signing_Certificate
     - name: Decode the pfx
       run: |
