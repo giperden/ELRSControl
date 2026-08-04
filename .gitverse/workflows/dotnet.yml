@@ -1,4 +1,4 @@
-name: .NET Core Desktop GitVerse
+name: .NET 10 WPF Desktop CI
 
 on:
   push:
@@ -12,7 +12,7 @@ jobs:
       matrix:
         configuration: [Debug, Release]
 
-    # Используем стандартный Windows-раннер GitVerse/RuStore
+    # Для WPF сборка возможна ТОЛЬКО на Windows-раннере
     runs-on: windows-latest
 
     env:
@@ -20,36 +20,34 @@ jobs:
       Test_Project_Path: ELRSControl\ELRSControl.csproj
 
     steps:
-    # Заменяем GitHub-экшен на официальное зеркало в GitVerse
+    # Получение исходного кода из репозитория GitVerse
     - name: Checkout
       uses: actions/checkout@v4
       with:
         fetch-depth: 0
 
-    # Установка .NET Core (удален дублирующийся шаг из вашего шаблона)
-    - name: Install .NET Core
+    # Установка .NET 10 SDK
+    - name: Install .NET 10 SDK
       uses: actions/setup-dotnet@v4
       with:
-        dotnet-version: 8.0.x
+        dotnet-version: 10.0.x
 
-    # Добавление MSBuild в PATH
+    # Добавление MSBuild в PATH (необходимо для старых проектов или специфичных .slnx процессов)
     - name: Setup MSBuild.exe
       uses: microsoft/setup-msbuild@v2
 
-    # Запуск юнит-тестов
+    # Восстановление зависимостей (NuGet пакетов) через CLI
+    - name: Restore dependencies
+      run: dotnet restore ${{ env.Solution_Name }}
+
+    # Запуск юнит-тестов (если они есть)
     - name: Execute unit tests
-      run: dotnet test
+      run: dotnet test --no-restore
 
-    # Восстановление зависимостей (исправлен синтаксис переменных для PowerShell)
-    - name: Restore the application
-      run: msbuild $env:Solution_Name /t:Restore /p:Configuration=$env:Matrix_Configuration
-      env:
-        Matrix_Configuration: ${{ matrix.configuration }}
+    # Сборка WPF приложения под конкретную конфигурацию (Debug/Release)
+    - name: Build Application
+      run: dotnet build ${{ env.Solution_Name }} --configuration ${{ matrix.configuration }} --no-restore
 
-    # Сборка проекта
-    - name: Build
-      run: dotnet build --configuration ${{ matrix.configuration }}
-
-    # Публикация артефактов
-    - name: Publish
-      run: dotnet publish --configuration ${{ matrix.configuration }} --output ./publish
+    # Публикация готового .exe и зависимостей в папку ./publish
+    - name: Publish Application
+      run: dotnet publish ${{ env.Solution_Name }} --configuration ${{ matrix.configuration }} --output ./publish/${{ matrix.configuration }}
