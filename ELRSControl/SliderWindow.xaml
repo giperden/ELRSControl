@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:ELRSControl"
         mc:Ignorable="d"
-        Title="SliderWindow" Height="450" Width="1800" WindowStyle="None" AllowsTransparency="True">
+        Title="SliderWindow" MinHeight="508" MinWidth="669" Height="508" Width="669" WindowStyle="None" AllowsTransparency="True">
     <WindowChrome.WindowChrome>
         <WindowChrome CaptionHeight="40" GlassFrameThickness="0" CornerRadius="20" ResizeBorderThickness="6"/>
     </WindowChrome.WindowChrome>
@@ -15,6 +15,121 @@
             <Style.Triggers>
                 <Trigger Property="IsMouseOver" Value="True">
                     <Setter Property="Background" Value="#E81123"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+        <Style x:Key="CustomScrollViewerStyle" TargetType="ScrollViewer">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="HorizontalScrollBarVisibility" Value="Auto"/>
+            <Setter Property="VerticalScrollBarVisibility" Value="Auto"/>
+        </Style>
+
+        <SolidColorBrush x:Key="Win11ThumbBrush" Color="#8A504F4F" />
+        <SolidColorBrush x:Key="Win11ThumbHoverBrush" Color="#8AF5F4F4" />
+
+        <Style x:Key="TransparentScrollButton" TargetType="{x:Type RepeatButton}">
+            <Setter Property="OverridesDefaultStyle" Value="True"/>
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Focusable" Value="False"/>
+            <Setter Property="IsTabStop" Value="False"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type RepeatButton}">
+                        <Border Background="Transparent" />
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Style x:Key="Win11ScrollThumb" TargetType="{x:Type Thumb}">
+            <Setter Property="SnapsToDevicePixels" Value="True" />
+            <Setter Property="OverridesDefaultStyle" Value="True" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type Thumb}">
+                        <Border x:Name="chrome" 
+                            Background="{StaticResource Win11ThumbBrush}" 
+                            CornerRadius="4" 
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Stretch"
+                            Width="4" 
+                            Height="Auto"
+                            Margin="2" />
+                        <ControlTemplate.Triggers>
+                            <DataTrigger Binding="{Binding Orientation, RelativeSource={RelativeSource AncestorType=ScrollBar}}" Value="Horizontal">
+                                <Setter TargetName="chrome" Property="Width" Value="Auto" />
+                                <Setter TargetName="chrome" Property="Height" Value="4" />
+                                <Setter TargetName="chrome" Property="HorizontalAlignment" Value="Stretch" />
+                                <Setter TargetName="chrome" Property="VerticalAlignment" Value="Center" />
+                            </DataTrigger>
+                            <MultiDataTrigger>
+                                <MultiDataTrigger.Conditions>
+                                    <Condition Binding="{Binding IsMouseOver, RelativeSource={RelativeSource Self}}" Value="True" />
+                                    <Condition Binding="{Binding Orientation, RelativeSource={RelativeSource AncestorType=ScrollBar}}" Value="Vertical" />
+                                </MultiDataTrigger.Conditions>
+                                <Setter TargetName="chrome" Property="Width" Value="8" />
+                                <Setter TargetName="chrome" Property="Background" Value="{StaticResource Win11ThumbHoverBrush}" />
+                            </MultiDataTrigger>
+                            <MultiDataTrigger>
+                                <MultiDataTrigger.Conditions>
+                                    <Condition Binding="{Binding IsMouseOver, RelativeSource={RelativeSource Self}}" Value="True" />
+                                    <Condition Binding="{Binding Orientation, RelativeSource={RelativeSource AncestorType=ScrollBar}}" Value="Horizontal" />
+                                </MultiDataTrigger.Conditions>
+                                <Setter TargetName="chrome" Property="Height" Value="8" />
+                                <Setter TargetName="chrome" Property="Background" Value="{StaticResource Win11ThumbHoverBrush}" />
+                            </MultiDataTrigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Style x:Key="ModernPaintScrollBar" TargetType="{x:Type ScrollBar}">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="SnapsToDevicePixels" Value="True"/>
+            <Setter Property="OverridesDefaultStyle" Value="True"/>
+            <Style.Triggers>
+                <Trigger Property="Orientation" Value="Vertical">
+                    <Setter Property="Width" Value="12"/>
+                    <Setter Property="Template">
+                        <Setter.Value>
+                            <ControlTemplate TargetType="{x:Type ScrollBar}">
+                                <Grid Background="Transparent">
+                                    <Track x:Name="PART_Track" IsDirectionReversed="True">
+                                        <Track.DecreaseRepeatButton>
+                                            <RepeatButton Command="{x:Static ScrollBar.PageUpCommand}" Style="{StaticResource TransparentScrollButton}"/>
+                                        </Track.DecreaseRepeatButton>
+                                        <Track.IncreaseRepeatButton>
+                                            <RepeatButton Command="{x:Static ScrollBar.PageDownCommand}" Style="{StaticResource TransparentScrollButton}"/>
+                                        </Track.IncreaseRepeatButton>
+                                        <Track.Thumb>
+                                            <Thumb Style="{StaticResource Win11ScrollThumb}" />
+                                        </Track.Thumb>
+                                    </Track>
+                                </Grid>
+                            </ControlTemplate>
+                        </Setter.Value>
+                </Setter>
+                </Trigger>
+                <Trigger Property="Orientation" Value="Horizontal">
+                    <Setter Property="Height" Value="12"/>
+                    <Setter Property="Template">
+                        <Setter.Value>
+                            <ControlTemplate TargetType="{x:Type ScrollBar}">
+                                <Grid Background="Transparent">
+                                    <Track x:Name="PART_Track" IsDirectionReversed="False">
+                                        <Track.DecreaseRepeatButton>
+                                            <RepeatButton Command="{x:Static ScrollBar.PageLeftCommand}" Style="{StaticResource TransparentScrollButton}"/>
+                                        </Track.DecreaseRepeatButton>
+                                        <Track.IncreaseRepeatButton>
+                                            <RepeatButton Command="{x:Static ScrollBar.PageRightCommand}" Style="{StaticResource TransparentScrollButton}"/>
+                                        </Track.IncreaseRepeatButton>
+                                        <Track.Thumb>
+                                            <Thumb Style="{StaticResource Win11ScrollThumb}" />
+                                        </Track.Thumb>
+                                    </Track>
+                                </Grid>
+                            </ControlTemplate>
+                        </Setter.Value>
+                </Setter>
                 </Trigger>
             </Style.Triggers>
         </Style>
@@ -114,7 +229,7 @@
             <Grid Grid.Row="0">
                 <Rectangle Fill="#0AFFFFFF" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" RadiusX="12" RadiusY="12"/>
                 <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="15,0,0,0">
-                    <TextBlock Text="Мой Paint • Fluent Эффект" Foreground="White" Opacity="0.9" FontSize="12" FontWeight="SemiBold"/>
+                    <TextBlock Text="Крутилки • CRSF" Foreground="White" Opacity="0.9" FontSize="12" FontWeight="SemiBold"/>
                 </StackPanel>
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Top">
                     <Button Style="{StaticResource CaptionButtonStyle}" Click="MinimizeBtn_Click" Content="&#xE921;"/>
@@ -168,62 +283,237 @@
 
                 <Separator Style="{StaticResource HeaderSeparatorStyle}" VerticalAlignment="Stretch" Margin="0,10"/>
 
-                <Button Style="{StaticResource HeaderButtonStyle}" Content="&#xE7FC;" FontSize="15" FontFamily="Segoe Fluent Icons, Segoe MDL2 Assets" VerticalAlignment="Stretch" Margin="10" Click="ConnectBtn_Click"/>
+                <Button Style="{StaticResource HeaderButtonStyle}" Content="&#xE7FC;" FontSize="15" FontFamily="Segoe Fluent Icons, Segoe MDL2 Assets" VerticalAlignment="Stretch" Margin="10" Click="MainWindow_Click"/>
 
             </StackPanel>
 
-            <Grid Grid.Row="2" Margin="12,0,12,12">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="1*"/>
-                    <ColumnDefinition Width="1*"/>
-                    <ColumnDefinition Width="1*"/>
-                    <ColumnDefinition Width="1*"/>
-                    <ColumnDefinition Width="1*"/>
-                    <ColumnDefinition Width="1*"/>
-                    <ColumnDefinition Width="1*"/>
-                    <ColumnDefinition Width="1*"/>
-                    <ColumnDefinition Width="1*"/>
-                    <ColumnDefinition Width="1*"/>
-                    <ColumnDefinition Width="1*"/>
-                    <ColumnDefinition Width="1*"/>
-                    <ColumnDefinition Width="1*"/>
-                    <ColumnDefinition Width="1*"/>
-                    <ColumnDefinition Width="1*"/>
-                    <ColumnDefinition Width="1*"/>
-                </Grid.ColumnDefinitions>
-                <Rectangle Grid.Column="0" Fill="#0AFFFFFF" Margin="12,12,12,12" RadiusX="12" RadiusY="12" />
-                <StackPanel Grid.Column="0" Orientation="Horizontal" Margin="12,12,12,12">
-                    <StackPanel>
-                        <Label Content="Канал 0" Foreground="#A0FFFFFF"  HorizontalAlignment="Center" VerticalAlignment="Top" FontSize="11"/>
-                        <Slider x:Name="Ch0Slider" Orientation="Vertical" Height="100" Style="{StaticResource ThreePositionSliderStyle}" Value="1500" />
-                        <TextBox x:Name="Ch0Text" Text="1500"/>
-                    </StackPanel>
-                </StackPanel>
-                <Rectangle Grid.Column="1" Fill="#0AFFFFFF" Margin="12,12,12,12" RadiusX="12" RadiusY="12" />
-                <StackPanel Grid.Column="1" Orientation="Horizontal" Margin="12,12,12,12">
-                    <StackPanel>
-                        <Label Content="Канал 1" Foreground="#A0FFFFFF"  HorizontalAlignment="Center" VerticalAlignment="Top" FontSize="11"/>
-                        <Slider x:Name="Ch1Slider" Orientation="Vertical" Height="100" Style="{StaticResource ThreePositionSliderStyle}" Value="1500" />
-                        <TextBox x:Name="Ch1Text" Text="1500"/>
-                    </StackPanel>
-                </StackPanel>
-                <Rectangle Grid.Column="2" Fill="#0AFFFFFF" Margin="12,12,12,12" RadiusX="12" RadiusY="12" />
-                <StackPanel Grid.Column="2" Orientation="Horizontal" Margin="12,12,12,12">
-                    <StackPanel>
-                        <Label Content="Канал 2" Foreground="#A0FFFFFF"  HorizontalAlignment="Center" VerticalAlignment="Top" FontSize="11"/>
-                        <Slider x:Name="Ch2Slider" Orientation="Vertical" Height="100" Style="{StaticResource ThreePositionSliderStyle}" Value="1500" />
-                        <TextBox x:Name="Ch2Text" Text="1500"/>
-                    </StackPanel>
-                </StackPanel>
-                <Rectangle Grid.Column="3" Fill="#0AFFFFFF" Margin="12,12,12,12" RadiusX="12" RadiusY="12" />
-                <StackPanel Grid.Column="3" Orientation="Horizontal" Margin="12,12,12,12">
-                    <StackPanel>
-                        <Label Content="Канал 3" Foreground="#A0FFFFFF"  HorizontalAlignment="Center" VerticalAlignment="Top" FontSize="11"/>
-                        <Slider x:Name="Ch3Slider" Orientation="Vertical" Height="100" Style="{StaticResource ThreePositionSliderStyle}" Value="1500" />
-                        <TextBox x:Name="Ch3Text" Text="1500"/>
-                    </StackPanel>
-                </StackPanel>
-            </Grid>
+            <ScrollViewer Grid.Row="2" Margin="12,0,12,12" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
+                <ScrollViewer.Resources>
+                    <Style TargetType="ScrollBar" BasedOn="{StaticResource ModernPaintScrollBar}"/>
+                </ScrollViewer.Resources>
+                <Grid x:Name="ControlLine" HorizontalAlignment="Stretch">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+
+                    <Border Grid.Column="0" Background="#0AFFFFFF" Margin="12,12,12,12" CornerRadius="12" MinWidth="100">
+                        <Grid Margin="8">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="*"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+                            <Label Grid.Row="0" Content="Канал 0" Foreground="#A0FFFFFF" HorizontalAlignment="Center" FontSize="11"/>
+                            <Slider Grid.Row="1" x:Name="Ch0Slider" Orientation="Vertical" Style="{StaticResource ThreePositionSliderStyle}" Value="1500" Minimum="900" Maximum="2100" VerticalAlignment="Stretch"/>
+                            <TextBox Grid.Row="2" x:Name="Ch0Text" Text="1500" HorizontalAlignment="Center" Margin="0,6,0,0"/>
+                        </Grid>
+                    </Border>
+                    <Border Grid.Column="1" Background="#0AFFFFFF" Margin="12,12,12,12" CornerRadius="12" MinWidth="100">
+                        <Grid Margin="8">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="*"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+                            <Label Grid.Row="0" Content="Канал 1" Foreground="#A0FFFFFF" HorizontalAlignment="Center" FontSize="11"/>
+                            <Slider Grid.Row="1" x:Name="Ch1Slider" Orientation="Vertical" Style="{StaticResource ThreePositionSliderStyle}" Value="1500" Minimum="900" Maximum="2100" VerticalAlignment="Stretch"/>
+                            <TextBox Grid.Row="2" x:Name="Ch1Text" Text="1500" HorizontalAlignment="Center" Margin="0,6,0,0"/>
+                        </Grid>
+                    </Border>
+                    <Border Grid.Column="2" Background="#0AFFFFFF" Margin="12,12,12,12" CornerRadius="12" MinWidth="100">
+                        <Grid Margin="8">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="*"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+                            <Label Grid.Row="0" Content="Канал 2" Foreground="#A0FFFFFF" HorizontalAlignment="Center" FontSize="11"/>
+                            <Slider Grid.Row="1" x:Name="Ch2Slider" Orientation="Vertical" Style="{StaticResource ThreePositionSliderStyle}" Value="1500" Minimum="900" Maximum="2100" VerticalAlignment="Stretch"/>
+                            <TextBox Grid.Row="2" x:Name="Ch2Text" Text="1500" HorizontalAlignment="Center" Margin="0,6,0,0"/>
+                        </Grid>
+                    </Border>
+                    <Border Grid.Column="3" Background="#0AFFFFFF" Margin="12,12,12,12" CornerRadius="12" MinWidth="100">
+                        <Grid Margin="8">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="*"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+                            <Label Grid.Row="0" Content="Канал 3" Foreground="#A0FFFFFF" HorizontalAlignment="Center" FontSize="11"/>
+                            <Slider Grid.Row="1" x:Name="Ch3Slider" Orientation="Vertical" Style="{StaticResource ThreePositionSliderStyle}" Value="900" Minimum="900" Maximum="2100" VerticalAlignment="Stretch"/>
+                            <TextBox Grid.Row="2" x:Name="Ch3Text" Text="900" HorizontalAlignment="Center" Margin="0,6,0,0"/>
+                        </Grid>
+                    </Border>
+                    <Border Grid.Column="4" Background="#0AFFFFFF" Margin="12,12,12,12" CornerRadius="12" MinWidth="100">
+                        <Grid Margin="8">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="*"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+                            <Label Grid.Row="0" Content="Канал 4" Foreground="#A0FFFFFF" HorizontalAlignment="Center" FontSize="11"/>
+                            <Slider Grid.Row="1" x:Name="Ch4Slider" Orientation="Vertical" Style="{StaticResource ThreePositionSliderStyle}" Value="1500" Minimum="900" Maximum="2100" VerticalAlignment="Stretch"/>
+                            <TextBox Grid.Row="2" x:Name="Ch4Text" Text="1500" HorizontalAlignment="Center" Margin="0,6,0,0"/>
+                        </Grid>
+                    </Border>
+                    <Border Grid.Column="5" Background="#0AFFFFFF" Margin="12,12,12,12" CornerRadius="12" MinWidth="100">
+                        <Grid Margin="8">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="*"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+                            <Label Grid.Row="0" Content="Канал 5" Foreground="#A0FFFFFF" HorizontalAlignment="Center" FontSize="11"/>
+                            <Slider Grid.Row="1" x:Name="Ch5Slider" Orientation="Vertical" Style="{StaticResource ThreePositionSliderStyle}" Value="1500" Minimum="900" Maximum="2100" VerticalAlignment="Stretch"/>
+                            <TextBox Grid.Row="2" x:Name="Ch5Text" Text="1500" HorizontalAlignment="Center" Margin="0,6,0,0"/>
+                        </Grid>
+                    </Border>
+                    <Border Grid.Column="6" Background="#0AFFFFFF" Margin="12,12,12,12" CornerRadius="12" MinWidth="100">
+                        <Grid Margin="8">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="*"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+                            <Label Grid.Row="0" Content="Канал 6" Foreground="#A0FFFFFF" HorizontalAlignment="Center" FontSize="11"/>
+                            <Slider Grid.Row="1" x:Name="Ch6Slider" Orientation="Vertical" Style="{StaticResource ThreePositionSliderStyle}" Value="1500" Minimum="900" Maximum="2100" VerticalAlignment="Stretch"/>
+                            <TextBox Grid.Row="2" x:Name="Ch6Text" Text="1500" HorizontalAlignment="Center" Margin="0,6,0,0"/>
+                        </Grid>
+                    </Border>
+
+                    <Border Grid.Column="7" Background="#0AFFFFFF" Margin="12,12,12,12" CornerRadius="12" MinWidth="100">
+                        <Grid Margin="8">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="*"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+                            <Label Grid.Row="0" Content="Канал 7" Foreground="#A0FFFFFF" HorizontalAlignment="Center" FontSize="11"/>
+                            <Slider Grid.Row="1" x:Name="Ch7Slider" Orientation="Vertical" Style="{StaticResource ThreePositionSliderStyle}" Value="1500" Minimum="900" Maximum="2100" VerticalAlignment="Stretch"/>
+                            <TextBox Grid.Row="2" x:Name="Ch7Text" Text="1500" HorizontalAlignment="Center" Margin="0,6,0,0"/>
+                        </Grid>
+                    </Border>
+
+                    <Border Grid.Column="8" Background="#0AFFFFFF" Margin="12,12,12,12" CornerRadius="12" MinWidth="100">
+                        <Grid Margin="8">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="*"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+                            <Label Grid.Row="0" Content="Канал 8" Foreground="#A0FFFFFF" HorizontalAlignment="Center" FontSize="11"/>
+                            <Slider Grid.Row="1" x:Name="Ch8Slider" Orientation="Vertical" Style="{StaticResource ThreePositionSliderStyle}" Value="1500" Minimum="900" Maximum="2100" VerticalAlignment="Stretch"/>
+                            <TextBox Grid.Row="2" x:Name="Ch8Text" Text="1500" HorizontalAlignment="Center" Margin="0,6,0,0"/>
+                        </Grid>
+                    </Border>
+
+                    <Border Grid.Column="9" Background="#0AFFFFFF" Margin="12,12,12,12" CornerRadius="12" MinWidth="100">
+                        <Grid Margin="8">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="*"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+                            <Label Grid.Row="0" Content="Канал 9" Foreground="#A0FFFFFF" HorizontalAlignment="Center" FontSize="11"/>
+                            <Slider Grid.Row="1" x:Name="Ch9Slider" Orientation="Vertical" Style="{StaticResource ThreePositionSliderStyle}" Value="1500" Minimum="900" Maximum="2100" VerticalAlignment="Stretch"/>
+                            <TextBox Grid.Row="2" x:Name="Ch9Text" Text="1500" HorizontalAlignment="Center" Margin="0,6,0,0"/>
+                        </Grid>
+                    </Border>
+
+                    <Border Grid.Column="10" Background="#0AFFFFFF" Margin="12,12,12,12" CornerRadius="12" MinWidth="100">
+                        <Grid Margin="8">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="*"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+                            <Label Grid.Row="0" Content="Канал 10" Foreground="#A0FFFFFF" HorizontalAlignment="Center" FontSize="11"/>
+                            <Slider Grid.Row="1" x:Name="Ch10Slider" Orientation="Vertical" Style="{StaticResource ThreePositionSliderStyle}" Value="1500" Minimum="900" Maximum="2100" VerticalAlignment="Stretch"/>
+                            <TextBox Grid.Row="2" x:Name="Ch10Text" Text="1500" HorizontalAlignment="Center" Margin="0,6,0,0"/>
+                        </Grid>
+                    </Border>
+
+                    <Border Grid.Column="11" Background="#0AFFFFFF" Margin="12,12,12,12" CornerRadius="12" MinWidth="100">
+                        <Grid Margin="8">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="*"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+                            <Label Grid.Row="0" Content="Канал 11" Foreground="#A0FFFFFF" HorizontalAlignment="Center" FontSize="11"/>
+                            <Slider Grid.Row="1" x:Name="Ch11Slider" Orientation="Vertical" Style="{StaticResource ThreePositionSliderStyle}" Value="1500" Minimum="900" Maximum="2100" VerticalAlignment="Stretch"/>
+                            <TextBox Grid.Row="2" x:Name="Ch11Text" Text="1500" HorizontalAlignment="Center" Margin="0,6,0,0"/>
+                        </Grid>
+                    </Border>
+
+                    <Border Grid.Column="12" Background="#0AFFFFFF" Margin="12,12,12,12" CornerRadius="12" MinWidth="100">
+                        <Grid Margin="8">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="*"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+                            <Label Grid.Row="0" Content="Канал 12" Foreground="#A0FFFFFF" HorizontalAlignment="Center" FontSize="11"/>
+                            <Slider Grid.Row="1" x:Name="Ch12Slider" Orientation="Vertical" Style="{StaticResource ThreePositionSliderStyle}" Value="1500" Minimum="900" Maximum="2100" VerticalAlignment="Stretch"/>
+                            <TextBox Grid.Row="2" x:Name="Ch12Text" Text="1500" HorizontalAlignment="Center" Margin="0,6,0,0"/>
+                        </Grid>
+                    </Border>
+
+                    <Border Grid.Column="13" Background="#0AFFFFFF" Margin="12,12,12,12" CornerRadius="12" MinWidth="100">
+                        <Grid Margin="8">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="*"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+                            <Label Grid.Row="0" Content="Канал 13" Foreground="#A0FFFFFF" HorizontalAlignment="Center" FontSize="11"/>
+                            <Slider Grid.Row="1" x:Name="Ch13Slider" Orientation="Vertical" Style="{StaticResource ThreePositionSliderStyle}" Value="1500" Minimum="900" Maximum="2100" VerticalAlignment="Stretch"/>
+                            <TextBox Grid.Row="2" x:Name="Ch13Text" Text="1500" HorizontalAlignment="Center" Margin="0,6,0,0"/>
+                        </Grid>
+                    </Border>
+
+                    <Border Grid.Column="14" Background="#0AFFFFFF" Margin="12,12,12,12" CornerRadius="12" MinWidth="100">
+                        <Grid Margin="8">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="*"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+                            <Label Grid.Row="0" Content="Канал 14" Foreground="#A0FFFFFF" HorizontalAlignment="Center" FontSize="11"/>
+                            <Slider Grid.Row="1" x:Name="Ch14Slider" Orientation="Vertical" Style="{StaticResource ThreePositionSliderStyle}" Value="1500" Minimum="900" Maximum="2100" VerticalAlignment="Stretch"/>
+                            <TextBox Grid.Row="2" x:Name="Ch14Text" Text="1500" HorizontalAlignment="Center" Margin="0,6,0,0"/>
+                        </Grid>
+                    </Border>
+
+                    <Border Grid.Column="15" Background="#0AFFFFFF" Margin="12,12,12,12" CornerRadius="12" MinWidth="100">
+                        <Grid Margin="8">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="*"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+                            <Label Grid.Row="0" Content="Канал 15" Foreground="#A0FFFFFF" HorizontalAlignment="Center" FontSize="11"/>
+                            <Slider Grid.Row="1" x:Name="Ch15Slider" Orientation="Vertical" Style="{StaticResource ThreePositionSliderStyle}" Value="1500" Minimum="900" Maximum="2100" VerticalAlignment="Stretch"/>
+                            <TextBox Grid.Row="2" x:Name="Ch15Text" Text="1500" HorizontalAlignment="Center" Margin="0,6,0,0"/>
+                        </Grid>
+                    </Border>
+                </Grid>
+            </ScrollViewer>
         </Grid>
     </Grid>
 </Window>

@@ -234,11 +234,11 @@ namespace ELRSControl
 
             try
             {
-                ushort roll = (ushort)1500;
-                ushort pitch = (ushort)1500;
-                ushort yaw = (ushort)1500;
-                ushort throttle = (ushort)1500;
-                ushort[] ch = { (ushort)1500 }; //{ (ushort)Ch4Slider.Value, (ushort)Ch5Slider.Value, (ushort)Ch6Slider.Value, (ushort)Ch7Slider.Value, (ushort)Ch8Slider.Value, (ushort)Ch9Slider.Value, (ushort)Ch10Slider.Value, (ushort)Ch11Slider.Value, (ushort)Ch12Slider.Value, (ushort)Ch13Slider.Value, (ushort)Ch14Slider.Value, (ushort)Ch15Slider.Value };
+                ushort roll = (ushort)Ch0Slider.Value;
+                ushort pitch = (ushort)Ch1Slider.Value;
+                ushort yaw = (ushort)Ch2Slider.Value;
+                ushort throttle = (ushort)Ch3Slider.Value;
+                ushort[] ch = { (ushort)Ch4Slider.Value, (ushort)Ch5Slider.Value, (ushort)Ch6Slider.Value, (ushort)Ch7Slider.Value, (ushort)Ch8Slider.Value, (ushort)Ch9Slider.Value, (ushort)Ch10Slider.Value, (ushort)Ch11Slider.Value, (ushort)Ch12Slider.Value, (ushort)Ch13Slider.Value, (ushort)Ch14Slider.Value, (ushort)Ch15Slider.Value };
                 byte address = byte.Parse(GlobalStates._selectedAddress, System.Globalization.NumberStyles.HexNumber);
                 _portManager.SendCRSFPacket(address, roll, pitch, yaw, throttle, ch);
             }
@@ -409,5 +409,12 @@ namespace ELRSControl
                 StartStopSending();
             }
         }
+
+        private void MainWindow_Click(object sender, RoutedEventArgs e)
+        {
+            MainWindow Win0 = new MainWindow();
+            Win0.Show();
+        }
+
     }
 }
