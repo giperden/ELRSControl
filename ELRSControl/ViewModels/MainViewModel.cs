@@ -2,6 +2,7 @@
 using System;
 using System.Collections.ObjectModel;
 using System.Globalization;
+using System.Net;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
@@ -286,7 +287,7 @@ namespace ELRSControl.ViewModels
             }
             else
             {
-                MessageBox.Show("Введите корректный HEX-адрес (например, 1F, А0, 8C)", "Ошибка ввода", MessageBoxButton.OK, MessageBoxImage.Warning);
+                Warning_window.ShowError($"Введите корректный HEX-адрес: {address}.\n(например, 1F, А0, 8C)");
             }
         }
         public void ToggleSending()
@@ -298,7 +299,7 @@ namespace ELRSControl.ViewModels
             {
                 if (string.IsNullOrWhiteSpace(SelectedPort) || SelectedPort == "пусто")
                 {
-                    MessageBox.Show("Пожалуйста, выберите серийный порт", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    Warning_window.ShowError("Пожалуйста, выберите серийный порт", "Ошибка подключения");;
                     return;
                 }
 
@@ -312,7 +313,7 @@ namespace ELRSControl.ViewModels
                 }
                 else
                 {
-                    MessageBox.Show($"Не удалось открыть порт {SelectedPort}", "Ошибка подключения", MessageBoxButton.OK, MessageBoxImage.Error);
+                    Warning_window.ShowError($"Не удалось открыть порт {SelectedPort}", "Ошибка подключения");
                 }
             }
             else
