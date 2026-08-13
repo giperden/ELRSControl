@@ -416,5 +416,16 @@ namespace ELRSControl
             Win0.Show();
         }
 
+        private void Ch0Text_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            if (Ch0Slider != null && int.TryParse(Ch0Text.Text, out int value))
+                Ch0Slider.Value = value;
+        }
+
+        private void Ch0Slider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            if (Ch0Slider != null && Ch0Text != null)
+                Ch0Text.Text = Ch0Slider.Value.ToString();
+        }
     }
 }

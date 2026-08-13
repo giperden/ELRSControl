@@ -319,8 +319,8 @@
                                 <RowDefinition Height="Auto"/>
                             </Grid.RowDefinitions>
                             <Label Grid.Row="0" Content="Канал 0" Foreground="#A0FFFFFF" HorizontalAlignment="Center" FontSize="11"/>
-                            <Slider Grid.Row="1" x:Name="Ch0Slider" Orientation="Vertical" Style="{StaticResource ThreePositionSliderStyle}" Value="1500" Minimum="900" Maximum="2100" VerticalAlignment="Stretch"/>
-                            <TextBox Grid.Row="2" x:Name="Ch0Text" Text="1500" HorizontalAlignment="Center" Margin="0,6,0,0"/>
+                            <Slider Grid.Row="1" x:Name="Ch0Slider" Orientation="Vertical" Style="{StaticResource ThreePositionSliderStyle}" Value="1500" Minimum="900" Maximum="2100" TickFrequency="1" IsSnapToTickEnabled="True" VerticalAlignment="Stretch" ValueChanged="Ch0Slider_ValueChanged"/>
+                            <TextBox Grid.Row="2" x:Name="Ch0Text" Text="1500" HorizontalAlignment="Center" Margin="0,6,0,0" TextChanged="Ch0Text_TextChanged"/>
                         </Grid>
                     </Border>
                     <Border Grid.Column="1" Background="#0AFFFFFF" Margin="12,12,12,12" CornerRadius="12" MinWidth="100">
