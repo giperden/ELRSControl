@@ -59,11 +59,9 @@ namespace ELRSControl
         private void MinimizeBtn_Click(object sender, RoutedEventArgs e) => this.WindowState = WindowState.Minimized;
         private void MaximizeBtn_Click(object sender, RoutedEventArgs e) => this.WindowState = this.WindowState == WindowState.Maximized ? WindowState.Normal : WindowState.Maximized;
         private void CloseBtn_Click(object sender, RoutedEventArgs e) => this.Close();
-
         private void MainWindow_Click(object sender, RoutedEventArgs e)
         {
-            MainWindow win = new MainWindow();
-            win.Show();
+            App.ShowMainWindow(); // Вместо new MainWindow().Show()
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

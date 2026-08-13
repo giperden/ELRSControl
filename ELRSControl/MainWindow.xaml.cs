@@ -67,11 +67,9 @@ namespace ELRSControl
             ViewModel.StopTransmissionOnClose();
             this.Close();
         }
-
         private void SliderWindow_Click(object sender, RoutedEventArgs e)
         {
-            SliderWindow win = new SliderWindow();
-            win.Show();
+            App.ShowSliderWindow(); // Вместо new SliderWindow().Show()
         }
 
         private void Menu_Drop_Click(object sender, RoutedEventArgs e)
