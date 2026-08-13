@@ -138,11 +138,23 @@
                 <StackPanel Orientation="Vertical" Margin="5">
                     <TextBlock Text="Адрес" Foreground="#A0FFFFFF" HorizontalAlignment="Center" VerticalAlignment="Top" FontSize="11"/>
                     <Menu Background="Transparent" WindowChrome.IsHitTestVisibleInChrome="True" HorizontalAlignment="Center" VerticalAlignment="Center">
-                        <MenuItem x:Name="AddressMenuButton" Header="FF" Style="{StaticResource MenuItemStyle}">
-                            <MenuItem Header="FF" Tag="FF" Click="AddressMenuItem_Click" Style="{StaticResource SelectableMenuItemStyle}"/>
-                            <MenuItem Header="C8" Tag="C8" Click="AddressMenuItem_Click" Style="{StaticResource SelectableMenuItemStyle}"/>
-                            <Separator/>
-                            <MenuItem Header="Добавить" Style="{StaticResource SelectableMenuItemStyle}"/>
+                        <MenuItem x:Name="AddressMenuButton" Header="{Binding SelectedAddress}" Style="{StaticResource MenuItemStyle}">
+                            <MenuItem.ItemsSource>
+                                <CompositeCollection>
+                                    <CollectionContainer Collection="{Binding Source={x:Static local:App.SharedViewModel}, Path=Addresses}"/>
+                                    <Separator/>
+                                    <MenuItem Header="Добавить..." 
+                          Command="{Binding Source={x:Static local:App.SharedViewModel}, Path=ShowAddAddressCommand}" 
+                          Style="{StaticResource SelectableMenuItemStyle}"/>
+                                </CompositeCollection>
+                            </MenuItem.ItemsSource>
+                            <MenuItem.ItemContainerStyle>
+                                <Style TargetType="MenuItem" BasedOn="{StaticResource SelectableMenuItemStyle}">
+                                    <Setter Property="Header" Value="{Binding}"/>
+                                    <Setter Property="Command" Value="{Binding Source={x:Static local:App.SharedViewModel}, Path=SelectAddressCommand}"/>
+                                    <Setter Property="CommandParameter" Value="{Binding}"/>
+                                </Style>
+                            </MenuItem.ItemContainerStyle>
                         </MenuItem>
                     </Menu>
                 </StackPanel>
@@ -151,28 +163,28 @@
 
                 <StackPanel Orientation="Vertical" Margin="5">
                     <TextBlock Text="Тяга" Foreground="#A0FFFFFF" HorizontalAlignment="Center" VerticalAlignment="Top" FontSize="11"/>
-                    <TextBox x:Name="ThrottleTextBox" Text="1500" TextChanged="ThrottleTextBox_TextChanged"/>
+                    <TextBox Text="{Binding Throttle, UpdateSourceTrigger=PropertyChanged}"/>
                 </StackPanel>
 
                 <Separator Style="{StaticResource HeaderSeparatorStyle}" VerticalAlignment="Stretch" Margin="0,10"/>
 
                 <StackPanel Orientation="Vertical" Margin="5">
                     <TextBlock Text="Рыскание" Foreground="#A0FFFFFF" HorizontalAlignment="Center" VerticalAlignment="Top" FontSize="11"/>
-                    <TextBox x:Name="YawTextBox" Text="1500" TextChanged="YawTextBox_TextChanged"/>
+                    <TextBox Text="{Binding Yaw, UpdateSourceTrigger=PropertyChanged}"/>
                 </StackPanel>
 
                 <Separator Style="{StaticResource HeaderSeparatorStyle}" VerticalAlignment="Stretch" Margin="0,10"/>
 
                 <StackPanel Orientation="Vertical" Margin="5">
                     <TextBlock Text="Крен" Foreground="#A0FFFFFF" HorizontalAlignment="Center" VerticalAlignment="Top" FontSize="11"/>
-                    <TextBox x:Name="RollTextBox" Text="1500" TextChanged="RollTextBox_TextChanged"/>
+                    <TextBox Text="{Binding Roll, UpdateSourceTrigger=PropertyChanged}"/>
                 </StackPanel>
 
                 <Separator Style="{StaticResource HeaderSeparatorStyle}" VerticalAlignment="Stretch" Margin="0,10"/>
 
                 <StackPanel Orientation="Vertical" Margin="5">
                     <TextBlock Text="Тангаж" Foreground="#A0FFFFFF" HorizontalAlignment="Center" VerticalAlignment="Top" FontSize="11"/>
-                    <TextBox x:Name="PitchTextBox" Text="1500" TextChanged="PitchTextBox_TextChanged"/>
+                    <TextBox Text="{Binding Pitch, UpdateSourceTrigger=PropertyChanged}"/>
                 </StackPanel>
 
                 <Separator Style="{StaticResource HeaderSeparatorStyle}" VerticalAlignment="Stretch" Margin="0,10"/>
@@ -180,13 +192,16 @@
                 <StackPanel Orientation="Vertical" Margin="5">
                     <TextBlock Text="Baudrate" Foreground="#A0FFFFFF" HorizontalAlignment="Center" VerticalAlignment="Top" FontSize="11"/>
                     <Menu Background="Transparent" WindowChrome.IsHitTestVisibleInChrome="True" HorizontalAlignment="Center" VerticalAlignment="Center">
-                        <MenuItem x:Name="BaudMenuButton" Header="115200" Style="{StaticResource MenuItemStyle}">
-                            <MenuItem Header="9600" Tag="9600" Click="BaudMenuItem_Click" Style="{StaticResource SelectableMenuItemStyle}"/>
-                            <MenuItem Header="19200" Tag="19200" Click="BaudMenuItem_Click" Style="{StaticResource SelectableMenuItemStyle}"/>
-                            <MenuItem Header="38400" Tag="38400" Click="BaudMenuItem_Click" Style="{StaticResource SelectableMenuItemStyle}"/>
-                            <MenuItem Header="57600" Tag="57600" Click="BaudMenuItem_Click" Style="{StaticResource SelectableMenuItemStyle}"/>
-                            <MenuItem Header="115200" Tag="115200" Click="BaudMenuItem_Click" Style="{StaticResource SelectableMenuItemStyle}"/>
-                            <TextBox x:Name="BaudBox" Text="115200" Tag="6969" TextChanged="BaudBox_TextChanged" HorizontalAlignment="Left" Margin="0" MinWidth="50" Width="auto"/>
+                        <MenuItem x:Name="BaudMenuButton" Header="{Binding SelectedBaudRate}" Style="{StaticResource MenuItemStyle}">
+                            <MenuItem Header="9600" Command="{Binding SelectBaudRateCommand}" CommandParameter="9600" Style="{StaticResource SelectableMenuItemStyle}"/>
+                            <MenuItem Header="19200" Command="{Binding SelectBaudRateCommand}" CommandParameter="19200" Style="{StaticResource SelectableMenuItemStyle}"/>
+                            <MenuItem Header="38400" Command="{Binding SelectBaudRateCommand}" CommandParameter="38400" Style="{StaticResource SelectableMenuItemStyle}"/>
+                            <MenuItem Header="57600" Command="{Binding SelectBaudRateCommand}" CommandParameter="57600" Style="{StaticResource SelectableMenuItemStyle}"/>
+                            <MenuItem Header="115200" Command="{Binding SelectBaudRateCommand}" CommandParameter="115200" Style="{StaticResource SelectableMenuItemStyle}"/>
+                            <Separator/>
+                            <MenuItem Header="Свое значение:" IsHitTestVisible="False" Foreground="#A0FFFFFF" FontSize="10"/>
+                            <TextBox Text="{Binding CustomBaudRateText, UpdateSourceTrigger=PropertyChanged}" 
+             HorizontalAlignment="Left" Margin="6,2" MinWidth="60" Width="Auto"/>
                         </MenuItem>
                     </Menu>
                 </StackPanel>
@@ -196,14 +211,25 @@
                 <StackPanel Orientation="Vertical" Margin="5">
                     <TextBlock Text="Устройство" Foreground="#A0FFFFFF" HorizontalAlignment="Center" VerticalAlignment="Top" FontSize="11"/>
                     <Menu Background="Transparent" WindowChrome.IsHitTestVisibleInChrome="True" HorizontalAlignment="Center" VerticalAlignment="Center">
-                        <MenuItem x:Name="PortMenuButton" Header="Пусто" Style="{StaticResource MenuItemStyle}">
-                            <MenuItem Header="COM9" Tag="COM9" Click="PortMenuItem_Click" Style="{StaticResource SelectableMenuItemStyle}"/>
-                            <MenuItem Header="COM8" Tag="COM8" Click="PortMenuItem_Click" Style="{StaticResource SelectableMenuItemStyle}"/>
+                        <MenuItem x:Name="PortMenuButton" Header="{Binding SelectedPort}" Style="{StaticResource MenuItemStyle}"
+          ItemsSource="{Binding AvailablePorts}">
+                            <MenuItem.ItemContainerStyle>
+                                <Style TargetType="MenuItem" BasedOn="{StaticResource SelectableMenuItemStyle}">
+                                    <Setter Property="Header" Value="{Binding PortName}"/>
+                                    <Setter Property="Command" Value="{Binding DataContext.SelectPortCommand, RelativeSource={RelativeSource AncestorType={x:Type Window}}}"/>
+                                    <Setter Property="CommandParameter" Value="{Binding PortName}"/>
+                                </Style>
+                            </MenuItem.ItemContainerStyle>
                         </MenuItem>
                     </Menu>
                 </StackPanel>
 
-                <Button x:Name="ConnectBtn" Style="{StaticResource HeaderButtonStyle}" Content="Старт" VerticalAlignment="Stretch" Margin="10" Click="ConnectBtn_Click"/>
+                <Button x:Name="ConnectBtn" 
+        Style="{StaticResource HeaderButtonStyle}" 
+        Content="{Binding ConnectBtnContent}" 
+        Background="{Binding ConnectBtnBackground}"
+        Command="{Binding ToggleConnectionCommand}"
+        VerticalAlignment="Stretch" Margin="10"/>
 
                 <Separator Style="{StaticResource HeaderSeparatorStyle}" VerticalAlignment="Stretch" Margin="0,10"/>
             </StackPanel>
@@ -236,29 +262,29 @@
                 <Border x:Name="RightMenu" Grid.Column="1" CornerRadius="0,0,10,10" Background="#0AFFFFFF" Margin="12,0,12,12" Visibility="Collapsed"/>
                 <StackPanel x:Name="RightMenuContent" Grid.Column="1" Orientation="Vertical" Margin="12,1,12,12" Visibility="Collapsed">
                     <TextBlock Text="Канал 5" Foreground="#A0FFFFFF" HorizontalAlignment="Center" VerticalAlignment="Top" FontSize="11"/>
-                    <Slider x:Name="Ch4Slider" Style="{StaticResource ThreePositionSliderStyle}" Value="1000" />
+                    <Slider x:Name="Ch4Slider" Style="{StaticResource ThreePositionSliderStyle}" Value="{Binding Ch4, Mode=TwoWay}"/>
                     <TextBlock Text="Канал 6" Foreground="#A0FFFFFF" HorizontalAlignment="Center" VerticalAlignment="Top" FontSize="11"/>
-                    <Slider x:Name="Ch5Slider" Style="{StaticResource ThreePositionSliderStyle}" Value="1500" />
+                    <Slider x:Name="Ch5Slider" Style="{StaticResource ThreePositionSliderStyle}" Value="{Binding Ch5, Mode=TwoWay}"/>
                     <TextBlock Text="Канал 7" Foreground="#A0FFFFFF" HorizontalAlignment="Center" VerticalAlignment="Top" FontSize="11"/>
-                    <Slider x:Name="Ch6Slider" Style="{StaticResource ThreePositionSliderStyle}" Value="1500" />
+                    <Slider x:Name="Ch6Slider" Style="{StaticResource ThreePositionSliderStyle}" Value="{Binding Ch6, Mode=TwoWay}"/>
                     <TextBlock Text="Канал 8" Foreground="#A0FFFFFF" HorizontalAlignment="Center" VerticalAlignment="Top" FontSize="11"/>
-                    <Slider x:Name="Ch7Slider" Style="{StaticResource ThreePositionSliderStyle}" Value="1500" />
+                    <Slider x:Name="Ch7Slider" Style="{StaticResource ThreePositionSliderStyle}" Value="{Binding Ch7, Mode=TwoWay}"/>
                     <TextBlock Text="Канал 9" Foreground="#A0FFFFFF" HorizontalAlignment="Center" VerticalAlignment="Top" FontSize="11"/>
-                    <Slider x:Name="Ch8Slider" Style="{StaticResource ThreePositionSliderStyle}" Value="1500" />
+                    <Slider x:Name="Ch8Slider" Style="{StaticResource ThreePositionSliderStyle}" Value="{Binding Ch8, Mode=TwoWay}"/>
                     <TextBlock Text="Канал 10" Foreground="#A0FFFFFF" HorizontalAlignment="Center" VerticalAlignment="Top" FontSize="11"/>
-                    <Slider x:Name="Ch9Slider" Style="{StaticResource ThreePositionSliderStyle}" Value="1500" />
+                    <Slider x:Name="Ch9Slider" Style="{StaticResource ThreePositionSliderStyle}" Value="{Binding Ch9, Mode=TwoWay}"/>
                     <TextBlock Text="Канал 11" Foreground="#A0FFFFFF" HorizontalAlignment="Center" VerticalAlignment="Top" FontSize="11"/>
-                    <Slider x:Name="Ch10Slider" Style="{StaticResource ThreePositionSliderStyle}" Value="1500" />
+                    <Slider x:Name="Ch10Slider" Style="{StaticResource ThreePositionSliderStyle}" Value="{Binding Ch10, Mode=TwoWay}"/>
                     <TextBlock Text="Канал 12" Foreground="#A0FFFFFF" HorizontalAlignment="Center" VerticalAlignment="Top" FontSize="11"/>
-                    <Slider x:Name="Ch11Slider" Style="{StaticResource ThreePositionSliderStyle}" Value="1500" />
+                    <Slider x:Name="Ch11Slider" Style="{StaticResource ThreePositionSliderStyle}" Value="{Binding Ch11, Mode=TwoWay}"/>
                     <TextBlock Text="Канал 13" Foreground="#A0FFFFFF" HorizontalAlignment="Center" VerticalAlignment="Top" FontSize="11"/>
-                    <Slider x:Name="Ch12Slider" Style="{StaticResource ThreePositionSliderStyle}" Value="1500" />
+                    <Slider x:Name="Ch12Slider" Style="{StaticResource ThreePositionSliderStyle}" Value="{Binding Ch12, Mode=TwoWay}"/>
                     <TextBlock Text="Канал 14" Foreground="#A0FFFFFF" HorizontalAlignment="Center" VerticalAlignment="Top" FontSize="11"/>
-                    <Slider x:Name="Ch13Slider" Style="{StaticResource ThreePositionSliderStyle}" Value="1500" />
+                    <Slider x:Name="Ch13Slider" Style="{StaticResource ThreePositionSliderStyle}" Value="{Binding Ch13, Mode=TwoWay}"/>
                     <TextBlock Text="Канал 15" Foreground="#A0FFFFFF" HorizontalAlignment="Center" VerticalAlignment="Top" FontSize="11"/>
-                    <Slider x:Name="Ch14Slider" Style="{StaticResource ThreePositionSliderStyle}" Value="1500" />
+                    <Slider x:Name="Ch14Slider" Style="{StaticResource ThreePositionSliderStyle}" Value="{Binding Ch14, Mode=TwoWay}"/>
                     <TextBlock Text="Канал 16" Foreground="#A0FFFFFF" HorizontalAlignment="Center" VerticalAlignment="Top" FontSize="11"/>
-                    <Slider x:Name="Ch15Slider" Style="{StaticResource ThreePositionSliderStyle}" Value="1500" />
+                    <Slider x:Name="Ch15Slider" Style="{StaticResource ThreePositionSliderStyle}" Value="{Binding Ch15, Mode=TwoWay}" />
                 </StackPanel>
 
                 <Viewbox x:Name="Joystick" Grid.Column="0" Grid.Row="1" Grid.ColumnSpan="1" >

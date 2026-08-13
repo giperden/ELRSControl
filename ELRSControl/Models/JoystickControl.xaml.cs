@@ -1,43 +1,64 @@
+using System;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using System.Windows.Shapes;
-using System.ComponentModel;
-using System.Runtime.CompilerServices;
 
 namespace ELRSControl.Models
 {
-    public partial class JoystickControl : UserControl, INotifyPropertyChanged
+    public partial class JoystickControl : UserControl
     {
         private bool _isMouseDown = false;
-        private int _centerX = 100;
-        private int _centerY = 100;
-        private int _radius = 75;
+        private const double CenterX = 100;
+        private const double CenterY = 100;
+        private const double Radius = 75;
 
-        private int _xValue = 1500;
-        private int _yValue = 1500;
+        #region Dependency Properties
+
+        public static readonly DependencyProperty XValueProperty =
+            DependencyProperty.Register(
+                nameof(XValue),
+                typeof(int),
+                typeof(JoystickControl),
+                new FrameworkPropertyMetadata(1500, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, OnChannelValueChanged));
+
+        public static readonly DependencyProperty YValueProperty =
+            DependencyProperty.Register(
+                nameof(YValue),
+                typeof(int),
+                typeof(JoystickControl),
+                new FrameworkPropertyMetadata(1500, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, OnChannelValueChanged));
 
         public int XValue
         {
-            get => _xValue;
-            set { _xValue = value; OnPropertyChanged(); UpdateKnobPosition(); }
+            get => (int)GetValue(XValueProperty);
+            set => SetValue(XValueProperty, value);
         }
 
         public int YValue
         {
-            get => _yValue;
-            set { _yValue = value; OnPropertyChanged(); UpdateKnobPosition(); }
+            get => (int)GetValue(YValueProperty);
+            set => SetValue(YValueProperty, value);
         }
+
+        private static void OnChannelValueChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            if (d is JoystickControl joystick && !joystick._isMouseDown)
+            {
+                joystick.UpdateKnobPosition();
+            }
+        }
+
+        #endregion
 
         public JoystickControl()
         {
             InitializeComponent();
-            this.DataContext = this;
         }
 
         private void JoystickCanvas_MouseDown(object sender, MouseButtonEventArgs e)
         {
             _isMouseDown = true;
+            JoystickCanvas.CaptureMouse();
             UpdateJoystickPosition(e.GetPosition(JoystickCanvas));
         }
 
@@ -52,28 +73,34 @@ namespace ELRSControl.Models
         private void JoystickCanvas_MouseUp(object sender, MouseButtonEventArgs e)
         {
             _isMouseDown = false;
+            JoystickCanvas.ReleaseMouseCapture();
         }
 
         private void JoystickCanvas_MouseLeave(object sender, MouseEventArgs e)
         {
-            _isMouseDown = false;
+            if (!JoystickCanvas.IsMouseCaptured)
+            {
+                _isMouseDown = false;
+            }
         }
 
         private void UpdateJoystickPosition(Point mousePos)
         {
-            double dx = mousePos.X - _centerX;
-            double dy = mousePos.Y - _centerY;
-            double distance = System.Math.Sqrt(dx * dx + dy * dy);
-            if (distance > _radius)
+            double dx = mousePos.X - CenterX;
+            double dy = mousePos.Y - CenterY;
+            double distance = Math.Sqrt(dx * dx + dy * dy);
+            if (distance > Radius)
             {
-                double angle = System.Math.Atan2(dy, dx);
-                dx = _radius * System.Math.Cos(angle);
-                dy = _radius * System.Math.Sin(angle);
+                double angle = Math.Atan2(dy, dx);
+                dx = Radius * Math.Cos(angle);
+                dy = Radius * Math.Sin(angle);
             }
-            XValue = (int)(1500 + (dx / _radius) * 500);
-            YValue = (int)(1500 - (dy / _radius) * 500);
-            XValue = System.Math.Max(1000, System.Math.Min(2000, XValue));
-            YValue = System.Math.Max(1000, System.Math.Min(2000, YValue));
+            int newX = (int)(1500 + (dx / Radius) * 500);
+            XValue = Math.Max(1000, Math.Min(2000, newX));
+            YValue = Math.Max(1000, Math.Min(2000, newY));
+
+            UpdateKnobPosition();
+            int newY = (int)(1500 - (dy / Radius) * 500);
         }
 
         private void UpdateKnobPosition()
@@ -81,27 +108,24 @@ namespace ELRSControl.Models
             double normalizedX = (XValue - 1500) / 500.0;
             double normalizedY = (1500 - YValue) / 500.0;
 
-            double x = _centerX - 15 + (normalizedX * _radius);
-            double y = _centerY - 15 + (normalizedY * _radius);
-            double dx = x + 15 - _centerX;
-            double dy = y + 15 - _centerY;
-            double distance = System.Math.Sqrt(dx * dx + dy * dy);
+            double x = CenterX - 15 + (normalizedX * Radius);
+            double y = CenterY - 15 + (normalizedY * Radius);
 
-            if (distance > _radius)
+            double dx = x + 15 - CenterX;
+            double dy = y + 15 - CenterY;
+            double distance = Math.Sqrt(dx * dx + dy * dy);
+
+            if (distance > Radius)
             {
-                double angle = System.Math.Atan2(dy, dx);
-                dx = _radius * System.Math.Cos(angle);
-                dy = _radius * System.Math.Sin(angle);
-                x = _centerX - 15 + dx;
-                y = _centerY - 15 + dy;
+                double angle = Math.Atan2(dy, dx);
+                dx = Radius * Math.Cos(angle);
+                dy = Radius * Math.Sin(angle);
+                x = CenterX - 15 + dx;
+                y = CenterY - 15 + dy;
             }
 
             Canvas.SetLeft(JoystickKnob, x);
             Canvas.SetTop(JoystickKnob, y);
         }
-
-        public event PropertyChangedEventHandler PropertyChanged;
-        protected void OnPropertyChanged([CallerMemberName] string name = null) =>
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
     }
 }
