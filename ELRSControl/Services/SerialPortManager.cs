@@ -132,22 +132,24 @@ namespace ELRSControl.Services
             public const int CRSF_CHANNELS = 16;
 
             /// <summary>
-            /// Масштабирует float 0.0..1.0 в CRSF внутреннее значение (191..1792).
+            /// Преобразует PWM в микросекундах (1000..2000) в CRSF внутреннее значение.
             /// </summary>
-            public static int CrsfScale(double val)
-            {
-                double v = Math.Max(0.0, Math.Min(1.0, val));
-                return (int)Math.Round(v * (CRSF_CHANNEL_VALUE_2000 - CRSF_CHANNEL_VALUE_1000) + CRSF_CHANNEL_VALUE_1000);
-            }
+            //public static int UsToCrsf(int us)
+            //{
+            //    int u = Math.Max(1000, Math.Min(2000, us));
+            //    double ratio = (u - 1000) / 1000.0;
+            //    return (int)Math.Round(ratio * (CRSF_CHANNEL_VALUE_2000 - CRSF_CHANNEL_VALUE_1000) + CRSF_CHANNEL_VALUE_1000);
+            //}
 
             /// <summary>
-            /// Преобразует PWM в микросекундах (1000..2000) в CRSF внутреннее значение.
+            /// Преобразует PWM в микросекундах (расширенный диапазон 880..2158 мкс) в CRSF значение (0..2047).
             /// </summary>
             public static int UsToCrsf(int us)
             {
-                int u = Math.Max(1000, Math.Min(2000, us));
-                double ratio = (u - 1000) / 1000.0;
-                return (int)Math.Round(ratio * (CRSF_CHANNEL_VALUE_2000 - CRSF_CHANNEL_VALUE_1000) + CRSF_CHANNEL_VALUE_1000);
+                int clampedUs = Math.Max(880, Math.Min(2158, us));
+                double crsfVal = (clampedUs - 1000) * 1.601 + 191;
+                int result = (int)Math.Round(crsfVal);
+                return Math.Max(0, Math.Min(2047, result));
             }
 
             /// <summary>

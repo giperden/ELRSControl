@@ -148,17 +148,28 @@ namespace ELRSControl.ViewModels
             get => _selectedBaudRate;
             set
             {
-                if (SetProperty(ref _selectedBaudRate, value) && _isTransmitting)
+                if (SetProperty(ref _selectedBaudRate, value))
                 {
-                    RestartSending();
+                    CustomBaudRateText = value;
+                    _configManager.SaveBaudRate(value); // Сохраняем при изменении
+
+                    if (_isTransmitting)
+                    {
+                        RestartSending();
+                    }
                 }
             }
         }
-
         public string SelectedAddress
         {
             get => _selectedAddress;
-            set => SetProperty(ref _selectedAddress, value);
+            set
+            {
+                if (SetProperty(ref _selectedAddress, value))
+                {
+                    _configManager.SaveAddress(value); // Сохраняем при изменении
+                }
+            }
         }
 
         public string ConnectBtnContent
@@ -187,12 +198,25 @@ namespace ELRSControl.ViewModels
         {
             RefreshPorts();
 
+            var config = _configManager.LoadConfig();
             Addresses.Add("FF");
             Addresses.Add("C8");
-            var customAddresses = _configManager.LoadCustomAddresses();
-            foreach (var addr in customAddresses)
+            if (config.CustomAddresses != null)
             {
-                if (addr != "C8" && addr != "FF") Addresses.Add(addr);
+                foreach (var addr in config.CustomAddresses)
+                {
+                    if (addr != "C8" && addr != "FF" && !Addresses.Contains(addr))
+                        Addresses.Add(addr);
+                }
+            }
+            if (!string.IsNullOrWhiteSpace(config.LastBaudRate))
+            {
+                _selectedBaudRate = config.LastBaudRate;
+                _customBaudRateText = config.LastBaudRate;
+            }
+            if (!string.IsNullOrWhiteSpace(config.LastAddress))
+            {
+                _selectedAddress = config.LastAddress;
             }
         }
 
@@ -202,9 +226,14 @@ namespace ELRSControl.ViewModels
             var ports = SerialPortManager.GetAvailablePorts();
             foreach (var p in ports) AvailablePorts.Add(p);
 
-            if (AvailablePorts.Count > 0 && (string.IsNullOrEmpty(SelectedPort) || SelectedPort == "пусто"))
+            if (AvailablePorts.Count > 0 )
             {
-                SelectedPort = AvailablePorts[0].PortName;
+                bool portExists = AvailablePorts.Any(p => p.PortName == SelectedPort);
+
+                if (!portExists || SelectedPort == "пусто" || string.IsNullOrWhiteSpace(SelectedPort))
+                {
+                    SelectedPort = AvailablePorts[0].PortName;
+                }
             }
             else if (AvailablePorts.Count == 0)
             {

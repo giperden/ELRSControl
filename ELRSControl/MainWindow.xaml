@@ -129,7 +129,7 @@
 
             <StackPanel Grid.Row="0" Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Top" Height="32" Width="138">
                 <Button Style="{StaticResource CaptionButtonStyle}" Click="MinimizeBtn_Click" Content="&#xE921;"/>
-                <Button Style="{StaticResource CaptionButtonStyle}" Click="MaximizeBtn_Click" Content="{Binding MaximizeIcon}"/>
+                <Button Style="{StaticResource CaptionButtonStyle}" Click="MaximizeBtn_Click" Content="{Binding MaximizeIcon, RelativeSource={RelativeSource AncestorType=Window}}"/>
                 <Button Style="{StaticResource CloseButtonStyle}" Click="CloseBtn_Click" Content="&#xE10A;"/>
             </StackPanel>
 
@@ -142,19 +142,61 @@
                             <MenuItem.ItemsSource>
                                 <CompositeCollection>
                                     <CollectionContainer Collection="{Binding Source={x:Static local:App.SharedViewModel}, Path=Addresses}"/>
+
                                     <Separator/>
-                                    <MenuItem Header="Добавить..." 
-                          Command="{Binding Source={x:Static local:App.SharedViewModel}, Path=ShowAddAddressCommand}" 
-                          Style="{StaticResource SelectableMenuItemStyle}"/>
+                                    <MenuItem Header="Добавить..." Command="{Binding Source={x:Static local:App.SharedViewModel}, Path=ShowAddAddressCommand}" StaysOpenOnClick="True">
+                                        <MenuItem.Style>
+                                            <Style TargetType="MenuItem" BasedOn="{StaticResource SelectableMenuItemStyle}">
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding Source={x:Static local:App.SharedViewModel}, Path=IsAddAddressVisible}" Value="True">
+                                                        <Setter Property="Visibility" Value="Collapsed"/>
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </MenuItem.Style>
+                                    </MenuItem>
+                                    <MenuItem StaysOpenOnClick="True">
+                                        <MenuItem.Style>
+                                            <Style TargetType="MenuItem" BasedOn="{StaticResource SelectableMenuItemStyle}">
+                                                <Setter Property="Visibility" Value="Collapsed"/>
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding Source={x:Static local:App.SharedViewModel}, Path=IsAddAddressVisible}" Value="True">
+                                                        <Setter Property="Visibility" Value="Visible"/>
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </MenuItem.Style>
+                                        <MenuItem.Header>
+                                            <DockPanel Width="120">
+                                                <Button Content="+" DockPanel.Dock="Right" Style="{StaticResource AddButtonStyle}" Command="{Binding Source={x:Static local:App.SharedViewModel}, Path=ConfirmAddAddressCommand}"/>
+                                                <TextBox Text="{Binding Source={x:Static local:App.SharedViewModel}, Path=NewAddressText, UpdateSourceTrigger=PropertyChanged}" Width="60" Margin="0" HorizontalAlignment="Left"/>
+                                            </DockPanel>
+                                        </MenuItem.Header>
+                                    </MenuItem>
                                 </CompositeCollection>
                             </MenuItem.ItemsSource>
                             <MenuItem.ItemContainerStyle>
                                 <Style TargetType="MenuItem" BasedOn="{StaticResource SelectableMenuItemStyle}">
-                                    <Setter Property="Header" Value="{Binding}"/>
                                     <Setter Property="Command" Value="{Binding Source={x:Static local:App.SharedViewModel}, Path=SelectAddressCommand}"/>
                                     <Setter Property="CommandParameter" Value="{Binding}"/>
                                 </Style>
                             </MenuItem.ItemContainerStyle>
+                            <MenuItem.ItemTemplate>
+                                <DataTemplate>
+                                    <DockPanel LastChildFill="True">
+                                        <Button Content="✕" DockPanel.Dock="Right" Margin="8,0,0,0" Style="{StaticResource DeleteButtonStyle}" Command="{Binding Source={x:Static local:App.SharedViewModel}, Path=DeleteAddressCommand}" CommandParameter="{Binding}" x:Name="DeleteBtn"/>
+                                        <TextBlock Text="{Binding}" VerticalAlignment="Center" Foreground="White" Margin="2,0"/>
+                                    </DockPanel>
+                                    <DataTemplate.Triggers>
+                                        <DataTrigger Binding="{Binding}" Value="FF">
+                                            <Setter TargetName="DeleteBtn" Property="Visibility" Value="Collapsed"/>
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding}" Value="C8">
+                                            <Setter TargetName="DeleteBtn" Property="Visibility" Value="Collapsed"/>
+                                        </DataTrigger>
+                                    </DataTemplate.Triggers>
+                                </DataTemplate>
+                            </MenuItem.ItemTemplate>
                         </MenuItem>
                     </Menu>
                 </StackPanel>
@@ -200,8 +242,7 @@
                             <MenuItem Header="115200" Command="{Binding SelectBaudRateCommand}" CommandParameter="115200" Style="{StaticResource SelectableMenuItemStyle}"/>
                             <Separator/>
                             <MenuItem Header="Свое значение:" IsHitTestVisible="False" Foreground="#A0FFFFFF" FontSize="10"/>
-                            <TextBox Text="{Binding CustomBaudRateText, UpdateSourceTrigger=PropertyChanged}" 
-             HorizontalAlignment="Left" Margin="6,2" MinWidth="60" Width="Auto"/>
+                            <TextBox Text="{Binding CustomBaudRateText, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Left" Margin="6,2" MinWidth="60" Width="Auto"/>
                         </MenuItem>
                     </Menu>
                 </StackPanel>
