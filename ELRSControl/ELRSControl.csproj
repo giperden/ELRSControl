@@ -6,7 +6,13 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <UseWPF>true</UseWPF>
+    <ApplicationIcon>ELRSControl.ico</ApplicationIcon>
+    <RepositoryUrl>https://gitverse.ru/giperden/ELRSControl.git</RepositoryUrl>
   </PropertyGroup>
+
+  <ItemGroup>
+    <Resource Include="ELRSControl.ico" />
+  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="System.IO.Ports" Version="8.0.0" />

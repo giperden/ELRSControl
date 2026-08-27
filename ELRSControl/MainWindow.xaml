@@ -7,7 +7,7 @@
         xmlns:models="clr-namespace:ELRSControl.Models"
         mc:Ignorable="d"
         MouseMove="Window_MouseMove"
-        Title="ELRS Control - CRSF" MinHeight="508" MinWidth="669" Height="508" Width="669" WindowStyle="None" AllowsTransparency="True">
+        Title="ELRS Control - CRSF" MinHeight="508" MinWidth="669" Height="508" Width="669" WindowStyle="None" AllowsTransparency="True" Icon="/ELRSControl.ico">
     <WindowChrome.WindowChrome>
         <WindowChrome CaptionHeight="40" GlassFrameThickness="0" CornerRadius="20" ResizeBorderThickness="6"/>
     </WindowChrome.WindowChrome>

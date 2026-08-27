@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:ELRSControl"
         mc:Ignorable="d"
-        Title="SliderWindow" MinHeight="508" MinWidth="669" Height="508" Width="669" WindowStyle="None" AllowsTransparency="True">
+        Title="SliderWindow" MinHeight="508" MinWidth="669" Height="508" Width="669" WindowStyle="None" AllowsTransparency="True" Icon="/ELRSControl.ico">
     <WindowChrome.WindowChrome>
         <WindowChrome CaptionHeight="40" GlassFrameThickness="0" CornerRadius="20" ResizeBorderThickness="6"/>
     </WindowChrome.WindowChrome>

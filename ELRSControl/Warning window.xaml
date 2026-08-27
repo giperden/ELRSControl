@@ -14,7 +14,8 @@
         
         WindowStyle="None" 
         AllowsTransparency="True" 
-        Background="Transparent">
+        Background="Transparent"
+        Icon="/ELRSControl.ico">
 
     <WindowChrome.WindowChrome>
         <WindowChrome CaptionHeight="40" GlassFrameThickness="0" CornerRadius="20" ResizeBorderThickness="0"/>
