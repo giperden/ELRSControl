@@ -1,3 +1,19 @@
 <Solution>
-  <Project Path="ELRSControl/ELRSControl.csproj" />
+  <Configurations>
+    <Platform Name="Any CPU" />
+    <Platform Name="ARM" />
+    <Platform Name="ARM64" />
+    <Platform Name="x64" />
+    <Platform Name="x86" />
+  </Configurations>
+  <Project Path="CRSFControl/CRSFControl.wapproj" Type="c7167f0d-bc9f-4e6e-afe1-012c56b48db5" Id="9fd7ae08-e24d-42ae-9bfd-6397652af1a4">
+    <Deploy />
+  </Project>
+  <Project Path="ELRSControl/ELRSControl.csproj">
+    <Platform Solution="Release|x64" Project="x64" />
+  </Project>
+  <Project Path="MSI/MSI.wixproj" Type="b7dd6f7e-def8-4e67-b5b7-07ef123db6f0" Id="2fee926f-c8f6-417f-921e-c169d3d00d18">
+    <Platform Solution="*|Any CPU" Project="x64" />
+    <Platform Solution="*|ARM" Project="x64" />
+  </Project>
 </Solution>

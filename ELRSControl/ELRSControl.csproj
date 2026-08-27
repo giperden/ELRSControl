@@ -8,6 +8,7 @@
     <UseWPF>true</UseWPF>
     <ApplicationIcon>ELRSControl.ico</ApplicationIcon>
     <RepositoryUrl>https://gitverse.ru/giperden/ELRSControl.git</RepositoryUrl>
+    <Platforms>AnyCPU;x64;x86</Platforms>
   </PropertyGroup>
 
   <ItemGroup>

@@ -1,0 +1,14 @@
+﻿<Wix xmlns="http://wixtoolset.org/schemas/v4/wxs">
+  <Package Id="TODO_Manufacturer.MSI"  
+		   Name="ELRSControl"
+		   Manufacturer="giperden"
+		   Version="1.0.0.0">
+	  <MajorUpgrade DowngradeErrorMessage="!(loc.DowngradeError)" />
+		<ComponentGroup Id="ProductComponents" Directory="INSTALLFOLDER">
+			<Files Include="$(var.ELRSControl.TargetDir)\**" />
+		</ComponentGroup>
+		<Feature Id="MainFeature" Title="ELRSControl" Level="1">
+			<ComponentGroupRef Id="ProductComponents" />
+		</Feature>
+	</Package>
+</Wix>
