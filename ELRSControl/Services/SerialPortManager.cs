@@ -123,6 +123,7 @@ namespace ELRSControl.Services
 
         /// <summary>
         /// Формирует CRSF пакет управления
+        /// Формат: [Адрес][Длина][Тип][Ch0:11bits][Ch1:11bits]...[CRC]
         /// </summary>
         public static class CrsfBuilder
         {
@@ -188,6 +189,7 @@ namespace ELRSControl.Services
             }
 
             /// <summary>
+            /// CRC8 по полиному 0xD5, совместимая с реализациями CRSF.
             /// </summary>
             public static byte Crc8(byte[] data)
             {
@@ -207,6 +209,8 @@ namespace ELRSControl.Services
 
             /// <summary>
             /// Создаёт полный CRSF кадр для отправки на полётный контроллер.
+            /// Значения roll/pitch/yaw/throttle — PWM в микросекундах (1000..2000).
+            /// Остальные каналы (4..15) заполняются центром (0.5 нормированного диапазона).
             /// </summary>
             public static byte[] PackChannels(int roll, int pitch, int yaw, int throttle, byte deviceAddr, ushort[] chanels)
             {
@@ -215,7 +219,6 @@ namespace ELRSControl.Services
                 chVals[1] = UsToCrsf(yaw);
                 chVals[2] = UsToCrsf(roll);
                 chVals[3] = UsToCrsf(pitch);
-
                 for (int i = 0; i < chanels.Length; i++)
                     chVals[i + 4] = UsToCrsf(chanels[i]);
 
@@ -245,7 +248,6 @@ namespace ELRSControl.Services
         {
             if (value < 1000) value = 1000;
             if (value > 2000) value = 2000;
-
             return (ushort)(988 + (value - 1000) * 1.059f);
         }
     }

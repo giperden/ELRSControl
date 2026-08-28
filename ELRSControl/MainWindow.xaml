@@ -142,7 +142,6 @@
                             <MenuItem.ItemsSource>
                                 <CompositeCollection>
                                     <CollectionContainer Collection="{Binding Source={x:Static local:App.SharedViewModel}, Path=Addresses}"/>
-
                                     <Separator/>
                                     <MenuItem Header="Добавить..." Command="{Binding Source={x:Static local:App.SharedViewModel}, Path=ShowAddAddressCommand}" StaysOpenOnClick="True">
                                         <MenuItem.Style>

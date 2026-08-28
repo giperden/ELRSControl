@@ -36,8 +36,6 @@ namespace ELRSControl
             {
                 warningWin.WindowStartupLocation = WindowStartupLocation.CenterScreen;
             }
-
-            // ShowDialog блокирует родительское окно, пока пользователь не закроет ошибку
             warningWin.ShowDialog();
         }
 

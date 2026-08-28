@@ -27,7 +27,6 @@ namespace ELRSControl
 
             this.StateChanged += (s, e) => MaximizeIcon = this.WindowState == WindowState.Maximized ? "\uE923" : "\uE922";
             this.Loaded += MainWindow_Loaded;
-
             LeftJoystick.SetBinding(Models.JoystickControl.XValueProperty, new System.Windows.Data.Binding("Roll") { Mode = System.Windows.Data.BindingMode.TwoWay });
             LeftJoystick.SetBinding(Models.JoystickControl.YValueProperty, new System.Windows.Data.Binding("Pitch") { Mode = System.Windows.Data.BindingMode.TwoWay });
             RightJoystick.SetBinding(Models.JoystickControl.XValueProperty, new System.Windows.Data.Binding("Yaw") { Mode = System.Windows.Data.BindingMode.TwoWay });
@@ -69,7 +68,7 @@ namespace ELRSControl
         }
         private void SliderWindow_Click(object sender, RoutedEventArgs e)
         {
-            App.ShowSliderWindow(); // Вместо new SliderWindow().Show()
+            App.ShowSliderWindow();
         }
 
         private void Menu_Drop_Click(object sender, RoutedEventArgs e)

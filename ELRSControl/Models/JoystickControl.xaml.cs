@@ -96,11 +96,11 @@ namespace ELRSControl.Models
                 dy = Radius * Math.Sin(angle);
             }
             int newX = (int)(1500 + (dx / Radius) * 500);
+            int newY = (int)(1500 - (dy / Radius) * 500);
             XValue = Math.Max(1000, Math.Min(2000, newX));
             YValue = Math.Max(1000, Math.Min(2000, newY));
 
             UpdateKnobPosition();
-            int newY = (int)(1500 - (dy / Radius) * 500);
         }
 
         private void UpdateKnobPosition()

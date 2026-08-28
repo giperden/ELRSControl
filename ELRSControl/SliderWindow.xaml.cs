@@ -61,7 +61,7 @@ namespace ELRSControl
         private void CloseBtn_Click(object sender, RoutedEventArgs e) => this.Close();
         private void MainWindow_Click(object sender, RoutedEventArgs e)
         {
-            App.ShowMainWindow(); // Вместо new MainWindow().Show()
+            App.ShowMainWindow();
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

@@ -24,7 +24,6 @@ namespace ELRSControl.ViewModels
         private string _selectedAddress = "FF";
         private string _connectBtnContent = "Старт";
         private Brush _connectBtnBackground = new SolidColorBrush(Color.FromArgb(33, 255, 255, 255));
-
         private readonly ushort[] _channels = new ushort[16] { 1500, 1500, 1500, 1500, 1000, 1500, 1500, 1500, 1500, 1500, 1500, 1500, 1500, 1500, 1500, 1500 };
 
         public ObservableCollection<SerialPortInfo> AvailablePorts { get; set; } = new();
@@ -89,7 +88,7 @@ namespace ELRSControl.ViewModels
             DeleteAddressCommand = new RelayCommand(param => DeleteAddress(param?.ToString()));
             _transmitTimer = new DispatcherTimer
             {
-                Interval = TimeSpan.FromMilliseconds(20) // 50 Hz
+                Interval = TimeSpan.FromMilliseconds(20)
             };
             _transmitTimer.Tick += (s, e) => TransmitTimer_Tick();
 
@@ -152,7 +151,7 @@ namespace ELRSControl.ViewModels
                 if (SetProperty(ref _selectedBaudRate, value))
                 {
                     CustomBaudRateText = value;
-                    _configManager.SaveBaudRate(value); // Сохраняем при изменении
+                    _configManager.SaveBaudRate(value);
 
                     if (_isTransmitting)
                     {
@@ -168,7 +167,7 @@ namespace ELRSControl.ViewModels
             {
                 if (SetProperty(ref _selectedAddress, value))
                 {
-                    _configManager.SaveAddress(value); // Сохраняем при изменении
+                    _configManager.SaveAddress(value);
                 }
             }
         }
@@ -198,7 +197,6 @@ namespace ELRSControl.ViewModels
         private void InitializeData()
         {
             RefreshPorts();
-
             var config = _configManager.LoadConfig();
             Addresses.Add("FF");
             Addresses.Add("C8");
@@ -230,7 +228,6 @@ namespace ELRSControl.ViewModels
             if (AvailablePorts.Count > 0 )
             {
                 bool portExists = AvailablePorts.Any(p => p.PortName == SelectedPort);
-
                 if (!portExists || SelectedPort == "пусто" || string.IsNullOrWhiteSpace(SelectedPort))
                 {
                     SelectedPort = AvailablePorts[0].PortName;
